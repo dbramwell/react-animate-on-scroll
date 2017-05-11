@@ -1,3 +1,12 @@
+sudo: required
+dist: trusty
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
 language: node_js
 node_js:
 - 7.7.4
@@ -5,5 +14,5 @@ before_script:
 - npm install
 before_install:
   - export CHROME_BIN=chromium-browser
-  - sh -e /etc/init.d/xvfb start
   - export DISPLAY=:99
+  - sh -e /etc/init.d/xvfb start
