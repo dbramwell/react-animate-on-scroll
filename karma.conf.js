@@ -1,22 +1,26 @@
 var webpack = require('webpack');
 
 module.exports = function (config) {
-  config.set({
+  var configuration = {
     browsers: ['ChromeNoSandboxHeadless'],
 
-customLaunchers: {
-  ChromeNoSandboxHeadless: {
-    base: 'Chrome',
-    flags: [
-      '--no-sandbox',
-      // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
-      '--headless',
-      '--disable-gpu',
-      // Without a remote debugging port, Google Chrome exits immediately.
-      ' --remote-debugging-port=9222',
-    ],
-  },
-},
+    customLaunchers: {
+      Chrome_travis_ci: {
+            base: 'Chrome',
+            flags: ['--no-sandbox']
+      },
+      ChromeNoSandboxHeadless: {
+        base: 'Chrome',
+        flags: [
+          '--no-sandbox',
+          // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
+          '--headless',
+          '--disable-gpu',
+          // Without a remote debugging port, Google Chrome exits immediately.
+          ' --remote-debugging-port=9222',
+        ],
+      },
+    },
     singleRun: true, //just run once by default
     frameworks: [ 'mocha' ], //use the mocha test framework
     files: [
@@ -44,5 +48,10 @@ customLaunchers: {
     webpackServer: {
       noInfo: true //please don't spam the console when running in karma!
     }
-  });
+  };
+
+  if(process.env.TRAVIS){
+    configuration.browsers = ['Chrome_travis_ci'];
+  }
+  config.set(configuration);
 };
