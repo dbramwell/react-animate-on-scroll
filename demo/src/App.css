@@ -1,0 +1,46 @@
+div.home {
+    padding-top: 120px;
+}
+
+div.page {
+  min-height: 100vh;
+  align-items: center;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
+  align-content: space-around;
+  flex-direction: column;
+}
+
+div.page:nth-child(odd) {
+  background: #AEB4CE;
+}
+
+div.page:nth-child(even) {
+  background: #DFE7FF;
+}
+
+@media screen and (max-width: 768px) {
+    #menu {
+        display: none !important;
+    }
+}
+
+h1 {
+    color: #f35626;
+    font-size: 8rem;
+    line-height: 1;
+    margin-bottom: 50px
+}
+
+h2 {
+  margin: 2rem;
+}
+
+pre {
+  font-size: 1.5rem;
+  width: 40%;
+}

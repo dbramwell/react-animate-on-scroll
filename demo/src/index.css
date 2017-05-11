@@ -1,0 +1,10 @@
+html {
+  -webkit-font-smoothing: antialiased;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
