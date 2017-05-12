@@ -16,9 +16,9 @@ npm install react-animate-on-scroll --save
 
 ```
 import ScrollAnimation from 'react-animate-on-scroll';
-<ScrollEffect animateIn="fadeIn">
+<ScrollAnimation animateIn="fadeIn">
   Some Text
-</ScrollEffect>
+</ScrollAnimation>
 ```
 ## Properties:
 **offset** - default 100
