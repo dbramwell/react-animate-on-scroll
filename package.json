@@ -21,7 +21,7 @@
     "reactAnimateOnScroll"
   ],
   "author": "dbramwell",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/dbramwell/react-animate-on-scroll/issues"
   },
