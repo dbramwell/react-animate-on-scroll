@@ -43,22 +43,31 @@ Animation duration in seconds.
 Whether the element should be visible to begin with or not. If animateIn is an entrance animation, then should probably be false.
 
 ## Development:
+
 In the project root:
+
 ### Install Depencenies:
+
 ``
 npm install
 ``
+
 ### Run Tests:
 
 There are some automated test cases with karma and a Chrome headless browser. I attempted to use Jest, and then to use PhantomJS, but could get neither to work with scroll events. To run them:
+
 ```
 npm test
 ```
+
 ### Build the component:
+
 ```
 gulp build
 ```
+
 ### Run the Demo project:
+
 ```
 cd demo
 npm install
