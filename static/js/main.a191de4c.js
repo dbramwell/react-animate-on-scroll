@@ -29116,7 +29116,7 @@
 	          'For more usage info, see the README in ',
 	          _react2.default.createElement(
 	            'a',
-	            { href: 'https://daneden.github.io/animate.css/' },
+	            { href: 'https://github.com/dbramwell/react-animate-on-scroll' },
 	            'Github'
 	          )
 	        )
@@ -68294,4 +68294,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.7272f113.js.map
+//# sourceMappingURL=main.a191de4c.js.map
