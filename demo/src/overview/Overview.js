@@ -19,7 +19,7 @@ class Overview extends Component {
 
   getScrollAnimationLink() {
     return (<ScrollAnimation animateIn="bounceInRight" animateOut="bounceOutLeft">
-          <h2>For more usage info, see the README in <a href="https://daneden.github.io/animate.css/">Github</a></h2>
+          <h2>For more usage info, see the README in <a href="https://github.com/dbramwell/react-animate-on-scroll">Github</a></h2>
         </ScrollAnimation>)
   }
 
