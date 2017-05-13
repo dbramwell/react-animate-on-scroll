@@ -2,6 +2,11 @@ div.home {
     padding-top: 120px;
 }
 
+div.waitForIt > div {
+  display: inline-block;
+  *display: inline;
+}
+
 div.page {
   min-height: 100vh;
   align-items: center;
@@ -37,7 +42,9 @@ h1 {
 }
 
 h2 {
-  margin: 2rem;
+  color: #d13404;
+  font-size: 4rem;
+  line-height: 1;
 }
 
 pre {

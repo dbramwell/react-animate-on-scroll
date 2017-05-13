@@ -10,7 +10,8 @@ class Menu extends Component {
         "animateIn",
         "animateOut",
         "initiallyVisible",
-        "duration"
+        "duration",
+        "delay"
       ],
       hash: ''
     }

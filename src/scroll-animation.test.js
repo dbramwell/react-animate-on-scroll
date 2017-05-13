@@ -182,13 +182,52 @@ describe('scrollEffect', function () {
     }, 200)
   });
 
+  it('if element is created with "delay" property, animation is delayed upon trigger', (done) => {
+    var scrollEffect = createScrollAnimationOffScreen({animateIn: "bounceInDown", delay: 1000});
+    scrollIntoCompleteView(scrollEffect);
+    setTimeout(function() {
+      expect(scrollEffect.node.className).toNotContain("bounceInDown");
+      setTimeout(function() {
+        expect(scrollEffect.node.className).toContain("bounceInDown");
+        done();
+      }, 150)
+    }, 900)
+  });
+
+  it('if element is created with "delay" property, and element is scrolled out of view, timeouts are cancelled', (done) => {
+    var scrollEffect = createScrollAnimationOffScreen({animateIn: "bounceInDown", delay: 1000});
+    scrollIntoCompleteView(scrollEffect);
+    setTimeout(function() {
+      scrollToTop();
+      setTimeout(function() {
+        expect(scrollEffect.node.className).toNotContain("bounceInDown");
+        done();
+      }, 850)
+    }, 200)
+  });
+
+  it('if element is given animate with delay, when scrolled out of view animation class is removed instantly', (done) => {
+    var scrollEffect = createScrollAnimationOffScreen({animateIn: "fadeIn", delay: 1000});
+    scrollIntoCompleteView(scrollEffect);
+    setTimeout(function() {
+      expect(scrollEffect.node.className).toContain("fadeIn");
+      scrollToTop();
+      setTimeout(function() {
+        expect(scrollEffect.node.className).toNotContain("fadeIn");
+        expect(scrollEffect.node.style.visibility).toBe("hidden");
+        done();
+      }, 200)
+    }, 1050)
+  });
+
   function createScrollAnimationOffScreen(props) {
     var size = props.size ? props.size : 100;
     ReactDOM.render(<div><div style={{height:10000 + 'px'}} /><div id="test"/><div style={{height:10000 + 'px'}} /></div>, myTestDiv);
     var div = document.getElementById("test");
     var offset = props.offset ? props.offset : 0;
     var duration = props.duration ? props.duration : 0;
-    return ReactDOM.render(<ScrollAnimation initiallyVisible={props.initiallyVisible} duration={duration} animateIn={props.animateIn} animateOut={props.animateOut} offset={offset}><div style={{height:size + "px"}}/></ScrollAnimation>, div);
+    var delay = props.delay ? props.delay : 0;
+    return ReactDOM.render(<ScrollAnimation delay={delay} initiallyVisible={props.initiallyVisible} duration={duration} animateIn={props.animateIn} animateOut={props.animateOut} offset={offset}><div style={{height:size + "px"}}/></ScrollAnimation>, div);
   }
 
   function scrollIntoCompleteView(elem) {

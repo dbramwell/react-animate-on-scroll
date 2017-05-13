@@ -5,6 +5,7 @@ import Home from './home/Home';
 import PropDescPage from './propDescriptionPage/PropDescPage';
 import ScrollableAnchor from 'react-scrollable-anchor';
 import Overview from './overview/Overview';
+import ScrollAnimation from 'react-animate-on-scroll';
 
 class App extends Component {
   render() {
@@ -25,6 +26,18 @@ class App extends Component {
         </ScrollableAnchor>
         <ScrollableAnchor id={'duration'}>
           <PropDescPage property="duration" initiallyVisible={true} animateIn="hinge" duration={5}/>
+        </ScrollableAnchor>
+        <ScrollableAnchor id={'delay'}>
+          <PropDescPage property="delay" initiallyVisible={true} animateIn="tada" delay={4000}>
+          <div className="waitForIt">
+          {"Wait...".split("").map(function(letter, index) {
+            console.log(index);
+            return <ScrollAnimation animateIn="fadeIn" delay={index * 500} offset={0}>
+              <h2>{letter}</h2>
+            </ScrollAnimation>
+          })}
+          </div>
+          </PropDescPage>
         </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>
           <Overview/>

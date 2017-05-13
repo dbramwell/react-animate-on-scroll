@@ -21,7 +21,8 @@ export default class ScrollAnimation extends Component {
     this.state = {
       classes: "animated",
       style: {'animationDuration': this.props.duration + 's', visibility: initialHide},
-      lastVisibility: {partially: false, completely: false}
+      lastVisibility: {partially: false, completely: false},
+      timeouts: []
     };
     if (window && window.addEventListener) {
       window.addEventListener('scroll', throttle(this.preHandleScroll.bind(this), 200));
@@ -49,12 +50,27 @@ export default class ScrollAnimation extends Component {
   }
 
   handleScroll() {
-      const visible = this.isVisible();
-      if (visible.completely !== this.state.lastVisibility.completely || visible.partially !== this.state.lastVisibility.partially) {
-        const style = this.getStyle(visible);
-        const classes = this.getClasses(visible);
+    const visible = this.isVisible();
+    if (!visible.partially) {
+      this.state.timeouts.forEach(function(tid) {
+        clearTimeout(tid);
+      })
+    }
+    if (visible.completely !== this.state.lastVisibility.completely || visible.partially !== this.state.lastVisibility.partially) {
+      const style = this.getStyle(visible);
+      const classes = this.getClasses(visible);
+      var that = this;
+      if (visible.partially) {
+        var timeout = setTimeout(function() {
+          that.setState({classes: classes, style: style, lastVisibility: visible});
+        }, this.props.delay);
+        var timeouts = this.state.timeouts.slice()
+        timeouts.push(timeout);
+        this.setState({timeouts: timeouts});
+      } else {
         this.setState({classes: classes, style: style, lastVisibility: visible});
       }
+    }
   }
 
   isVisible() {
@@ -113,7 +129,8 @@ export default class ScrollAnimation extends Component {
 ScrollAnimation.defaultProps = {
   offset: 100,
   duration: 1,
-  initiallyVisible: false
+  initiallyVisible: false,
+  delay: 0
 };
 
 ScrollAnimation.propTypes = {
@@ -121,5 +138,6 @@ ScrollAnimation.propTypes = {
   animateOut: PropTypes.string,
   offset: PropTypes.number,
   duration: PropTypes.number,
+  delay: PropTypes.number,
   initiallyVisible: PropTypes.bool
 }
