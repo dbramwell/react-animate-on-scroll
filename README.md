@@ -43,6 +43,10 @@ Animation duration in seconds.
 
 Whether the element should be visible to begin with or not. If animateIn is an entrance animation, then should probably be false.
 
+**delay** - default 0
+
+How long to delay the animation for (in milliseconds) once it enters or leaves the view.
+
 ## Development:
 
 In the project root:
