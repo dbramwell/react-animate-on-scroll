@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import throttle from 'lodash.throttle';
-import '../lib/animate.min.css';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import throttle from "lodash.throttle";
+import "../lib/animate.min.css";
+import PropTypes from "prop-types";
 
 export default class ScrollAnimation extends Component {
   static posTop() {
-    if (typeof window.pageYOffset !== 'undefined') {
+    if (typeof window.pageYOffset !== "undefined") {
       return window.pageYOffset;
     } else if (document.documentElement.scrollTop) {
       return document.documentElement.scrollTop;
@@ -17,35 +17,28 @@ export default class ScrollAnimation extends Component {
 
   constructor(props) {
     super(props);
-    const initialHide = this.props.initiallyVisible ? '' : 'hidden';
+    const initialHide = this.props.initiallyVisible ? "" : "hidden";
     this.state = {
-      classes: "animated",
-      style: {'animationDuration': this.props.duration + 's', visibility: initialHide},
+      classes: "",
+      style: {"animationDuration": this.props.duration + "s", visibility: initialHide},
       lastVisibility: {partially: false, completely: false},
       timeouts: []
     };
     if (window && window.addEventListener) {
-      window.addEventListener('scroll', throttle(this.preHandleScroll.bind(this), 200));
+      window.addEventListener("scroll", throttle(this.handleScroll.bind(this), 200));
     }
     this.getClasses = this.getClasses.bind(this);
   }
 
   componentDidMount() {
-    this.preHandleScroll();
+    this.setState({elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
+                 elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()}, this.handleScroll);
+    this.handleScroll();
   }
 
   componentWillUnmount() {
     if (window && window.addEventListener) {
-      window.removeEventListener('scroll', this.handleScroll.bind(this));
-    }
-  }
-
-  preHandleScroll() {
-    if (this.state.classes === "animated") {
-      this.setState({elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-                   elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()}, this.handleScroll);
-    } else {
-      this.handleScroll();
+      window.removeEventListener("scroll", this.handleScroll.bind(this));
     }
   }
 
@@ -96,19 +89,19 @@ export default class ScrollAnimation extends Component {
   }
 
   getStyle(visible) {
-    var style = {'animationDuration': this.props.duration + 's'};
+    var style = {"animationDuration": this.props.duration + "s"};
     if (!visible.partially && !this.props.initiallyVisible) {
-      style.visibility = 'hidden';
+      style.visibility = "hidden";
     } else if (!visible.completely &&
                 visible.partially &&
                 !this.state.lastVisibility.partially && !this.props.initiallyVisible) {
-      style.visibility = 'hidden';
+      style.visibility = "hidden";
     }
     return style;
   }
 
   getClasses(visible) {
-    var classes = "animated";
+    var classes = "";
     if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut)) {
       classes += " " + this.props.animateIn;
     } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
@@ -140,4 +133,4 @@ ScrollAnimation.propTypes = {
   duration: PropTypes.number,
   delay: PropTypes.number,
   initiallyVisible: PropTypes.bool
-}
+};
