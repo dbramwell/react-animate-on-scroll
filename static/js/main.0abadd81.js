@@ -8522,21 +8522,21 @@
 /* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(1);
 	
@@ -8546,8 +8546,6 @@
 	
 	var _lodashThrottle2 = _interopRequireDefault(_lodashThrottle);
 	
-	__webpack_require__(363);
-	
 	var _propTypes = __webpack_require__(8);
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
@@ -8556,9 +8554,9 @@
 	  _inherits(ScrollAnimation, _Component);
 	
 	  _createClass(ScrollAnimation, null, [{
-	    key: 'posTop',
+	    key: "posTop",
 	    value: function posTop() {
-	      if (typeof window.pageYOffset !== 'undefined') {
+	      if (typeof window.pageYOffset !== "undefined") {
 	        return window.pageYOffset;
 	      } else if (document.documentElement.scrollTop) {
 	        return document.documentElement.scrollTop;
@@ -8572,44 +8570,36 @@
 	  function ScrollAnimation(props) {
 	    _classCallCheck(this, ScrollAnimation);
 	
-	    _get(Object.getPrototypeOf(ScrollAnimation.prototype), 'constructor', this).call(this, props);
-	    var initialHide = this.props.initiallyVisible ? '' : 'hidden';
+	    _get(Object.getPrototypeOf(ScrollAnimation.prototype), "constructor", this).call(this, props);
+	    var initialHide = this.props.initiallyVisible ? "" : "hidden";
 	    this.state = {
 	      classes: "animated",
-	      style: { 'animationDuration': this.props.duration + 's', visibility: initialHide },
+	      style: { "animationDuration": this.props.duration + "s", visibility: initialHide },
 	      lastVisibility: { partially: false, completely: false },
 	      timeouts: []
 	    };
 	    if (window && window.addEventListener) {
-	      window.addEventListener('scroll', (0, _lodashThrottle2['default'])(this.preHandleScroll.bind(this), 200));
+	      window.addEventListener("scroll", (0, _lodashThrottle2["default"])(this.handleScroll.bind(this), 200));
 	    }
 	    this.getClasses = this.getClasses.bind(this);
 	  }
 	
 	  _createClass(ScrollAnimation, [{
-	    key: 'componentDidMount',
+	    key: "componentDidMount",
 	    value: function componentDidMount() {
-	      this.preHandleScroll();
+	      this.setState({ elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
+	        elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop() }, this.handleScroll);
+	      this.handleScroll();
 	    }
 	  }, {
-	    key: 'componentWillUnmount',
+	    key: "componentWillUnmount",
 	    value: function componentWillUnmount() {
 	      if (window && window.addEventListener) {
-	        window.removeEventListener('scroll', this.handleScroll.bind(this));
+	        window.removeEventListener("scroll", this.handleScroll.bind(this));
 	      }
 	    }
 	  }, {
-	    key: 'preHandleScroll',
-	    value: function preHandleScroll() {
-	      if (this.state.classes === "animated") {
-	        this.setState({ elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-	          elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop() }, this.handleScroll);
-	      } else {
-	        this.handleScroll();
-	      }
-	    }
-	  }, {
-	    key: 'handleScroll',
+	    key: "handleScroll",
 	    value: function handleScroll() {
 	      var _this = this;
 	
@@ -8644,7 +8634,7 @@
 	      }
 	    }
 	  }, {
-	    key: 'isVisible',
+	    key: "isVisible",
 	    value: function isVisible() {
 	      var viewBottom = window.scrollY + window.innerHeight;
 	      var viewTop = window.scrollY;
@@ -8666,18 +8656,18 @@
 	      };
 	    }
 	  }, {
-	    key: 'getStyle',
+	    key: "getStyle",
 	    value: function getStyle(visible) {
-	      var style = { 'animationDuration': this.props.duration + 's' };
+	      var style = { "animationDuration": this.props.duration + "s" };
 	      if (!visible.partially && !this.props.initiallyVisible) {
-	        style.visibility = 'hidden';
+	        style.visibility = "hidden";
 	      } else if (!visible.completely && visible.partially && !this.state.lastVisibility.partially && !this.props.initiallyVisible) {
-	        style.visibility = 'hidden';
+	        style.visibility = "hidden";
 	      }
 	      return style;
 	    }
 	  }, {
-	    key: 'getClasses',
+	    key: "getClasses",
 	    value: function getClasses(visible) {
 	      var classes = "animated";
 	      if (visible.completely && this.props.animateIn || visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut) {
@@ -8688,12 +8678,12 @@
 	      return classes;
 	    }
 	  }, {
-	    key: 'render',
+	    key: "render",
 	    value: function render() {
 	      var _this2 = this;
 	
-	      return _react2['default'].createElement(
-	        'div',
+	      return _react2["default"].createElement(
+	        "div",
 	        { ref: function (node) {
 	            _this2.node = node;
 	          }, className: this.state.classes, style: this.state.style },
@@ -8705,7 +8695,7 @@
 	  return ScrollAnimation;
 	})(_react.Component);
 	
-	exports['default'] = ScrollAnimation;
+	exports["default"] = ScrollAnimation;
 	
 	ScrollAnimation.defaultProps = {
 	  offset: 100,
@@ -8715,14 +8705,14 @@
 	};
 	
 	ScrollAnimation.propTypes = {
-	  animateIn: _propTypes2['default'].string,
-	  animateOut: _propTypes2['default'].string,
-	  offset: _propTypes2['default'].number,
-	  duration: _propTypes2['default'].number,
-	  delay: _propTypes2['default'].number,
-	  initiallyVisible: _propTypes2['default'].bool
+	  animateIn: _propTypes2["default"].string,
+	  animateOut: _propTypes2["default"].string,
+	  offset: _propTypes2["default"].number,
+	  duration: _propTypes2["default"].number,
+	  delay: _propTypes2["default"].number,
+	  initiallyVisible: _propTypes2["default"].bool
 	};
-	module.exports = exports['default'];
+	module.exports = exports["default"];
 
 /***/ },
 /* 99 */
@@ -28774,6 +28764,8 @@
 	var _reactAnimateOnScroll = __webpack_require__(98);
 	
 	var _reactAnimateOnScroll2 = _interopRequireDefault(_reactAnimateOnScroll);
+	
+	__webpack_require__(363);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -68351,4 +68343,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.0e4e57f0.js.map
+//# sourceMappingURL=main.0abadd81.js.map
