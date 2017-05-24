@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import "../node_modules/animate.css/animate.min.css";
 var expect = require("expect");
 import ScrollAnimation from "./scroll-animation";
 
@@ -28,6 +29,11 @@ describe("ScrollAnimation -", function () {
       });
   });
 
+  it("has no class when not in view", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.node.className).toBe("");
+  });
+
   it("does not have class matching the 'animateIn' prop when not in complete view", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
@@ -36,11 +42,6 @@ describe("ScrollAnimation -", function () {
       expect(scrollAnimation.node.className).toNotContain("zoomIn");
       done();
     }, 200);
-  });
-
-  it("has no class when not in view", () => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    expect(scrollAnimation.node.className).toBe("");
   });
 
   it("class matching 'animateIn' is added when animation is scrolled into comlete view", (done) => {
@@ -148,9 +149,11 @@ describe("ScrollAnimation -", function () {
 
   it("if animation changes size or position of component, scrolling slightly at this time should not stop animation", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "bounceInDown", duration: 5});
+    var initialTop = scrollAnimation.node.getBoundingClientRect().top;
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.className.includes("bounceInDown")},
       () => {
+        expect(scrollAnimation.node.getBoundingClientRect().top).toBeLessThan(initialTop);
         window.scrollTo(0, window.scrollY + 4);
         setTimeout(function() {
           expect(scrollAnimation.node.className).toContain("bounceInDown");

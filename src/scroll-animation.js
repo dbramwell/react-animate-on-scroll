@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import throttle from "lodash.throttle";
-import "../lib/animate.min.css";
 import PropTypes from "prop-types";
 
 export default class ScrollAnimation extends Component {

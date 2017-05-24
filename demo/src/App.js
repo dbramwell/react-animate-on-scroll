@@ -6,6 +6,7 @@ import PropDescPage from './propDescriptionPage/PropDescPage';
 import ScrollableAnchor from 'react-scrollable-anchor';
 import Overview from './overview/Overview';
 import ScrollAnimation from 'react-animate-on-scroll';
+import "../node_modules/animate.css/animate.min.css";
 
 class App extends Component {
   render() {

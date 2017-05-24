@@ -1,6 +1,7 @@
 {
   "name": "demo",
   "dependencies": {
+    "animate.css": "^3.5.2",
     "jsx-to-string": "^1.1.0",
     "prismjs": "^1.6.0",
     "react": "^15.5.4",
