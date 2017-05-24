@@ -11,6 +11,21 @@ Inspired by [React-Scroll-Effect](https://github.com/anorudes/react-scroll-effec
 ```
 npm install react-animate-on-scroll --save
 ```
+**If you want to use the animations from animate.css, be sure to include animate.css in someway in your project**
+This can be done in a number of ways, eg:
+```
+npm install --save animate.css
+```
+and then importing in your project:
+```
+import "../node_modules/animate.css/animate.min.css";
+```
+Or by simply including a link to the file hosted by CDNJS:
+```
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+</head>
+```
 
 ## Most Simple Use:
 
