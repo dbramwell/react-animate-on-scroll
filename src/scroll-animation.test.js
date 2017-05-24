@@ -29,9 +29,19 @@ describe("ScrollAnimation -", function () {
       });
   });
 
-  it("has no class when not in view", () => {
+  it("has animated class when in view", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    expect(scrollAnimation.node.className).toBe("");
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.node.className.includes("zoomIn")},
+      () => {
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        done();
+      });
+  });
+
+  it("has animated class when not in view", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.node.className).toBe("animated");
   });
 
   it("does not have class matching the 'animateIn' prop when not in complete view", (done) => {
