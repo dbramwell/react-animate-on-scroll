@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "../node_modules/animate.css/animate.min.css";
+import "animate.css/animate.min.css";
 var expect = require("expect");
 import ScrollAnimation from "./scroll-animation";
 
@@ -225,6 +225,27 @@ describe("ScrollAnimation -", function () {
             expect(scrollAnimation.node.style.visibility).toBe("hidden");
             done();
           }, 50);
+      });
+  });
+
+  it("only animates once with 'animateOnce' property", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true });
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.node.className.includes("zoomIn")},
+      () => {
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        scrollToBottom();
+        waitFor(() => {return !scrollAnimation.node.className.includes("zoomIn")},
+          () => {
+            expect(scrollAnimation.node.className).toNotContain("zoomIn");
+            scrollIntoCompleteView(scrollAnimation);
+            waitFor(() => {return !scrollAnimation.node.className.includes("zoomIn")},
+              () => {
+                expect(scrollAnimation.node.className).toNotContain("zoomIn");
+                scrollIntoCompleteView(scrollAnimation);
+                done();
+              });
+          });
       });
   });
 
