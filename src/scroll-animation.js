@@ -21,7 +21,8 @@ export default class ScrollAnimation extends Component {
       classes: "animated",
       style: {"animationDuration": this.props.duration + "s", visibility: initialHide},
       lastVisibility: {partially: false, completely: false},
-      timeouts: []
+      timeouts: [],
+      hasAnimated: false
     };
     if (window && window.addEventListener) {
       window.addEventListener("scroll", throttle(this.handleScroll.bind(this), 200));
@@ -58,7 +59,7 @@ export default class ScrollAnimation extends Component {
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
-        this.setState({timeouts: timeouts});
+        this.setState({timeouts: timeouts, hasAnimated: true });
       } else {
         this.setState({classes: classes, style: style, lastVisibility: visible});
       }
@@ -89,6 +90,7 @@ export default class ScrollAnimation extends Component {
 
   getStyle(visible) {
     var style = {"animationDuration": this.props.duration + "s"};
+    if (this.props.animateOnce && this.state.hasAnimated) return style;
     if (!visible.partially && !this.props.initiallyVisible) {
       style.visibility = "hidden";
     } else if (!visible.completely &&
@@ -101,6 +103,7 @@ export default class ScrollAnimation extends Component {
 
   getClasses(visible) {
     var classes = "animated";
+    if (this.props.animateOnce && this.state.hasAnimated) return classes;
     if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut)) {
       classes += " " + this.props.animateIn;
     } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
@@ -122,7 +125,8 @@ ScrollAnimation.defaultProps = {
   offset: 100,
   duration: 1,
   initiallyVisible: false,
-  delay: 0
+  delay: 0,
+  animateOnce: false
 };
 
 ScrollAnimation.propTypes = {
@@ -131,5 +135,6 @@ ScrollAnimation.propTypes = {
   offset: PropTypes.number,
   duration: PropTypes.number,
   delay: PropTypes.number,
-  initiallyVisible: PropTypes.bool
+  initiallyVisible: PropTypes.bool,
+  animateOnce: PropTypes.bool
 };
