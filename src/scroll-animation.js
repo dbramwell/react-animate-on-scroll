@@ -21,8 +21,7 @@ export default class ScrollAnimation extends Component {
       classes: "animated",
       style: {"animationDuration": this.props.duration + "s", visibility: initialHide},
       lastVisibility: {partially: false, completely: false},
-      timeouts: [],
-      hasAnimated: false
+      timeouts: []
     };
     if (window && window.addEventListener) {
       window.addEventListener("scroll", throttle(this.handleScroll.bind(this), 200));
@@ -49,6 +48,9 @@ export default class ScrollAnimation extends Component {
         clearTimeout(tid);
       })
     }
+    if (this.props.animateOnce && this.state.lastVisibility.completely) {
+      return;
+    }
     if (visible.completely !== this.state.lastVisibility.completely || visible.partially !== this.state.lastVisibility.partially) {
       const style = this.getStyle(visible);
       const classes = this.getClasses(visible);
@@ -59,7 +61,7 @@ export default class ScrollAnimation extends Component {
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
-        this.setState({timeouts: timeouts, hasAnimated: true });
+        this.setState({timeouts: timeouts});
       } else {
         this.setState({classes: classes, style: style, lastVisibility: visible});
       }
@@ -90,7 +92,6 @@ export default class ScrollAnimation extends Component {
 
   getStyle(visible) {
     var style = {"animationDuration": this.props.duration + "s"};
-    if (this.props.animateOnce && this.state.hasAnimated) return style;
     if (!visible.partially && !this.props.initiallyVisible) {
       style.visibility = "hidden";
     } else if (!visible.completely &&
@@ -103,7 +104,6 @@ export default class ScrollAnimation extends Component {
 
   getClasses(visible) {
     var classes = "animated";
-    if (this.props.animateOnce && this.state.hasAnimated) return classes;
     if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut)) {
       classes += " " + this.props.animateIn;
     } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
