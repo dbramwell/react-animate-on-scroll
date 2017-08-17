@@ -11,7 +11,8 @@ class Menu extends Component {
         "animateOut",
         "initiallyVisible",
         "duration",
-        "delay"
+        "delay",
+        "animateOnce"
       ],
       hash: ''
     }

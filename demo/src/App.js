@@ -41,7 +41,7 @@ class App extends Component {
           </PropDescPage>
         </ScrollableAnchor>
         <ScrollableAnchor id={'animateOnce'}>
-          <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce"/>
+          <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce" initiallyVisible={true}/>
         </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>
           <Overview/>
