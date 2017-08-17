@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "../node_modules/animate.css/animate.min.css";
+import "animate.css/animate.min.css";
 var expect = require("expect");
 import ScrollAnimation from "./scroll-animation";
 
@@ -228,6 +228,27 @@ describe("ScrollAnimation -", function () {
       });
   });
 
+  it("only animates once with 'animateOnce' property", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true });
+    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.className).toNotContain("zoomIn");
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.node.className.includes("zoomIn")},
+      () => {
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
+        scrollToTop();
+        ensureNotSatisfied(() => {return !scrollAnimation.node.className.includes("zoomIn")},
+          () => {
+            expect(scrollAnimation.node.className).toContain("zoomIn");
+            expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
+            done();
+          }
+        );
+      }
+    );
+  });
+
   function createScrollAnimationOffScreen(props) {
     var size = props.size ? props.size : 100;
     ReactDOM.render(<div><div style={{height:10000 + "px"}} /><div id="test"/><div style={{height:10000 + "px"}} /></div>, myTestDiv);
@@ -235,7 +256,7 @@ describe("ScrollAnimation -", function () {
     var offset = props.offset ? props.offset : 0;
     var duration = props.duration ? props.duration : 0;
     var delay = props.delay ? props.delay : 0;
-    return ReactDOM.render(<ScrollAnimation delay={delay} initiallyVisible={props.initiallyVisible} duration={duration} animateIn={props.animateIn} animateOut={props.animateOut} offset={offset}><div style={{height:size + "px"}}/></ScrollAnimation>, div);
+    return ReactDOM.render(<ScrollAnimation animateOnce={props.animateOnce} delay={delay} initiallyVisible={props.initiallyVisible} duration={duration} animateIn={props.animateIn} animateOut={props.animateOut} offset={offset}><div style={{height:size + "px"}}/></ScrollAnimation>, div);
   }
 
   function scrollIntoCompleteView(elem) {
@@ -278,6 +299,19 @@ describe("ScrollAnimation -", function () {
       }, 10);
     } else {
       callback();
+    }
+  }
+
+  function ensureNotSatisfied(condition, callback, timeToWait = 1000, time = 0) {
+    if (timeToWait - time < 0) {
+      callback();
+    } else if (!condition()) {
+      setTimeout(function() {
+        time += 10;
+        ensureNotSatisfied(condition, callback, timeToWait, time);
+      }, 10);
+    } else {
+      throw new Error("Condition was satisfied: " + condition);
     }
   }
 });

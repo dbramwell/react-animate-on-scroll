@@ -48,6 +48,9 @@ export default class ScrollAnimation extends Component {
         clearTimeout(tid);
       })
     }
+    if (this.props.animateOnce && this.state.lastVisibility.completely) {
+      return;
+    }
     if (visible.completely !== this.state.lastVisibility.completely || visible.partially !== this.state.lastVisibility.partially) {
       const style = this.getStyle(visible);
       const classes = this.getClasses(visible);
@@ -122,7 +125,8 @@ ScrollAnimation.defaultProps = {
   offset: 100,
   duration: 1,
   initiallyVisible: false,
-  delay: 0
+  delay: 0,
+  animateOnce: false
 };
 
 ScrollAnimation.propTypes = {
@@ -131,5 +135,6 @@ ScrollAnimation.propTypes = {
   offset: PropTypes.number,
   duration: PropTypes.number,
   delay: PropTypes.number,
-  initiallyVisible: PropTypes.bool
+  initiallyVisible: PropTypes.bool,
+  animateOnce: PropTypes.bool
 };
