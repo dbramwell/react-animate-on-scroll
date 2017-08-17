@@ -18,7 +18,7 @@ npm install --save animate.css
 ```
 and then importing in your project:
 ```
-import "../node_modules/animate.css/animate.min.css";
+import "animate.css/animate.min.css";
 ```
 Or by simply including a link to the file hosted by CDNJS:
 ```
@@ -62,15 +62,19 @@ Whether the element should be visible to begin with or not. If animateIn is an e
 
 How long to delay the animation for (in milliseconds) once it enters or leaves the view.
 
+**animateOnce** - default false
+
+Whether the element should only animate once or not.
+
 ## Development:
 
 In the project root:
 
-### Install Depencenies:
+### Install Dependencies:
 
-``
+```
 npm install
-``
+```
 
 ### Run Tests:
 
