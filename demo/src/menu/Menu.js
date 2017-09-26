@@ -33,8 +33,9 @@ class Menu extends Component {
             </Navbar.Brand>
           </Navbar.Header>
           <Nav>
-            {this.state.properties.map(prop =>
-              <NavItem active={this.state.hash.includes(prop)} href={"#" + prop}>{prop}</NavItem>
+            {this.state.properties.map( (prop, index) => {
+              return <NavItem key={index} active={this.state.hash.includes(prop)} href={"#" + prop}>{prop}</NavItem>
+            }
             )}
           </Nav>
           <Nav pullRight>
