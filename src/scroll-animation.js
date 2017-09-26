@@ -17,14 +17,15 @@ export default class ScrollAnimation extends Component {
   constructor(props) {
     super(props);
     const initialHide = this.props.initiallyVisible ? "" : "hidden";
+    this.listener = throttle(this.handleScroll.bind(this), 200);
     this.state = {
       classes: "animated",
       style: {"animationDuration": this.props.duration + "s", visibility: initialHide},
       lastVisibility: {partially: false, completely: false},
-      timeouts: []
+      timeouts: [],
     };
     if (window && window.addEventListener) {
-      window.addEventListener("scroll", throttle(this.handleScroll.bind(this), 200));
+      window.addEventListener("scroll", this.listener);
     }
     this.getClasses = this.getClasses.bind(this);
   }
@@ -37,7 +38,7 @@ export default class ScrollAnimation extends Component {
 
   componentWillUnmount() {
     if (window && window.addEventListener) {
-      window.removeEventListener("scroll", this.handleScroll.bind(this));
+      window.removeEventListener("scroll", this.listener);
     }
   }
 
