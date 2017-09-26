@@ -12,39 +12,38 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Menu/>
+        <Menu />
         <ScrollableAnchor id={'home'}>
-          <Home/>
+          <Home />
         </ScrollableAnchor>
         <ScrollableAnchor id={'animateIn'}>
-          <PropDescPage property="animateIn" animateIn="fadeIn"/>
+          <PropDescPage property="animateIn" animateIn="fadeIn" />
         </ScrollableAnchor>
         <ScrollableAnchor id={'animateOut'}>
-          <PropDescPage property="animateOut" animateOut="flipOutY" animateIn="flipInY"/>
+          <PropDescPage property="animateOut" animateOut="flipOutY" animateIn="flipInY" />
         </ScrollableAnchor>
         <ScrollableAnchor id={'initiallyVisible'}>
-          <PropDescPage property="initiallyVisible" initiallyVisible={true} animateIn="wobble"/>
+          <PropDescPage property="initiallyVisible" initiallyVisible={true} animateIn="wobble" />
         </ScrollableAnchor>
         <ScrollableAnchor id={'duration'}>
-          <PropDescPage property="duration" initiallyVisible={true} animateIn="hinge" duration={5}/>
+          <PropDescPage property="duration" initiallyVisible={true} animateIn="hinge" duration={5} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'delay'}>
           <PropDescPage property="delay" initiallyVisible={true} animateIn="tada" delay={4000}>
-          <div className="waitForIt">
-          {"Wait...".split("").map(function(letter, index) {
-            console.log(index);
-            return <ScrollAnimation animateIn="fadeIn" delay={index * 500} offset={0}>
-              <h2>{letter}</h2>
-            </ScrollAnimation>
-          })}
-          </div>
+            <div className="waitForIt">
+              {"Wait...".split("").map(function (letter, index) {
+                return <ScrollAnimation key={index} animateIn="fadeIn" delay={index * 500} offset={0}>
+                  <h2>{letter}</h2>
+                </ScrollAnimation>
+              })}
+            </div>
           </PropDescPage>
         </ScrollableAnchor>
         <ScrollableAnchor id={'animateOnce'}>
-          <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce" initiallyVisible={true}/>
+          <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce" initiallyVisible={true} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>
-          <Overview/>
+          <Overview />
         </ScrollableAnchor>
       </div>
     );

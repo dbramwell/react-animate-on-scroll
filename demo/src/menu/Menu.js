@@ -20,7 +20,7 @@ class Menu extends Component {
 
   componentDidMount() {
     const that = this;
-    window.onhashchange = function() { that.setState({hash: window.location.hash})};
+    window.onhashchange = function () { that.setState({ hash: window.location.hash }) };
   }
 
   render() {
@@ -33,9 +33,9 @@ class Menu extends Component {
             </Navbar.Brand>
           </Navbar.Header>
           <Nav>
-            {this.state.properties.map(prop =>
-              <NavItem active={this.state.hash.includes(prop)} href={"#" + prop}>{prop}</NavItem>
-            )}
+            {this.state.properties.map((prop, index) => {
+              return <NavItem active={this.state.hash.includes(prop)} key={index} href={"#" + prop}>{prop}</NavItem>
+            })}
           </Nav>
           <Nav pullRight>
             <NavItem active={this.state.hash.includes("install")} href="#install">Install</NavItem>
