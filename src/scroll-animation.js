@@ -20,8 +20,8 @@ export default class ScrollAnimation extends Component {
     this.listener = throttle(this.handleScroll.bind(this), 200);
     this.state = {
       classes: "animated",
-      style: {"animationDuration": this.props.duration + "s", visibility: initialHide},
-      lastVisibility: {partially: false, completely: false},
+      style: { "animationDuration": this.props.duration + "s", visibility: initialHide },
+      lastVisibility: { partially: false, completely: false },
       timeouts: [],
     };
     if (window && window.addEventListener) {
@@ -31,8 +31,10 @@ export default class ScrollAnimation extends Component {
   }
 
   componentDidMount() {
-    this.setState({elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-                 elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()}, this.handleScroll);
+    this.setState({
+      elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
+      elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
+    }, this.handleScroll);
     this.handleScroll();
   }
 
@@ -45,7 +47,7 @@ export default class ScrollAnimation extends Component {
   handleScroll() {
     const visible = this.isVisible();
     if (!visible.partially) {
-      this.state.timeouts.forEach(function(tid) {
+      this.state.timeouts.forEach(function (tid) {
         clearTimeout(tid);
       })
     }
@@ -57,14 +59,14 @@ export default class ScrollAnimation extends Component {
       const classes = this.getClasses(visible);
       var that = this;
       if (visible.partially) {
-        var timeout = setTimeout(function() {
-          that.setState({classes: classes, style: style, lastVisibility: visible});
+        var timeout = setTimeout(function () {
+          that.setState({ classes: classes, style: style, lastVisibility: visible });
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
-        this.setState({timeouts: timeouts});
+        this.setState({ timeouts: timeouts });
       } else {
-        this.setState({classes: classes, style: style, lastVisibility: visible});
+        this.setState({ classes: classes, style: style, lastVisibility: visible });
       }
     }
   }
@@ -75,11 +77,11 @@ export default class ScrollAnimation extends Component {
     const offset = this.props.offset;
     const elementBottom = this.state.elementBottom;
     const elementTop = this.state.elementTop;
-    const middleOfView = window.scrollY + (window.innerHeight/2);
-    if (elementBottom - elementTop > window.innerHeight - (2*offset)) {
+    const middleOfView = window.scrollY + (window.innerHeight / 2);
+    if (elementBottom - elementTop > window.innerHeight - (2 * offset)) {
       const completely = (elementTop < middleOfView + offset && elementBottom > middleOfView - offset);
       const partially = completely || (((elementTop > middleOfView + offset && elementTop < viewBottom) ||
-          (elementBottom < middleOfView - offset && elementBottom > viewTop)));
+        (elementBottom < middleOfView - offset && elementBottom > viewTop)));
       return {
         completely: completely,
         partially: partially
@@ -92,12 +94,12 @@ export default class ScrollAnimation extends Component {
   }
 
   getStyle(visible) {
-    var style = {"animationDuration": this.props.duration + "s"};
+    var style = { "animationDuration": this.props.duration + "s" };
     if (!visible.partially && !this.props.initiallyVisible) {
       style.visibility = "hidden";
     } else if (!visible.completely &&
-                visible.partially &&
-                !this.state.lastVisibility.partially && !this.props.initiallyVisible) {
+      visible.partially &&
+      !this.state.lastVisibility.partially && !this.props.initiallyVisible) {
       style.visibility = "hidden";
     }
     return style;
