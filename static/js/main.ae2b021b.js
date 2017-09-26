@@ -8775,6 +8775,7 @@
 	
 	    _get(Object.getPrototypeOf(ScrollAnimation.prototype), "constructor", this).call(this, props);
 	    var initialHide = this.props.initiallyVisible ? "" : "hidden";
+	    this.listener = (0, _lodashThrottle2["default"])(this.handleScroll.bind(this), 200);
 	    this.state = {
 	      classes: "animated",
 	      style: { "animationDuration": this.props.duration + "s", visibility: initialHide },
@@ -8782,7 +8783,7 @@
 	      timeouts: []
 	    };
 	    if (window && window.addEventListener) {
-	      window.addEventListener("scroll", (0, _lodashThrottle2["default"])(this.handleScroll.bind(this), 200));
+	      window.addEventListener("scroll", this.listener);
 	    }
 	    this.getClasses = this.getClasses.bind(this);
 	  }
@@ -8790,15 +8791,17 @@
 	  _createClass(ScrollAnimation, [{
 	    key: "componentDidMount",
 	    value: function componentDidMount() {
-	      this.setState({ elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-	        elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop() }, this.handleScroll);
+	      this.setState({
+	        elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
+	        elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
+	      }, this.handleScroll);
 	      this.handleScroll();
 	    }
 	  }, {
 	    key: "componentWillUnmount",
 	    value: function componentWillUnmount() {
 	      if (window && window.addEventListener) {
-	        window.removeEventListener("scroll", this.handleScroll.bind(this));
+	        window.removeEventListener("scroll", this.listener);
 	      }
 	    }
 	  }, {
@@ -29302,10 +29305,9 @@
 	              'div',
 	              { className: 'waitForIt' },
 	              "Wait...".split("").map(function (letter, index) {
-	                console.log(index);
 	                return _react2.default.createElement(
 	                  _reactAnimateOnScroll2.default,
-	                  { animateIn: 'fadeIn', delay: index * 500, offset: 0 },
+	                  { key: index, animateIn: 'fadeIn', delay: index * 500, offset: 0 },
 	                  _react2.default.createElement(
 	                    'h2',
 	                    null,
@@ -29546,10 +29548,10 @@
 	          _react2.default.createElement(
 	            _reactBootstrap.Nav,
 	            null,
-	            this.state.properties.map(function (prop) {
+	            this.state.properties.map(function (prop, index) {
 	              return _react2.default.createElement(
 	                _reactBootstrap.NavItem,
-	                { active: _this2.state.hash.includes(prop), href: "#" + prop },
+	                { active: _this2.state.hash.includes(prop), key: index, href: "#" + prop },
 	                prop
 	              );
 	            })
@@ -69241,4 +69243,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.6ea8f2dd.js.map
+//# sourceMappingURL=main.ae2b021b.js.map
