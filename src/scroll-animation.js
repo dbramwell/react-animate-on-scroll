@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import throttle from "lodash.throttle";
 import PropTypes from "prop-types";
 
+let window = window || {};
+
 export default class ScrollAnimation extends Component {
   static posTop() {
     if (typeof window.pageYOffset !== "undefined") {
