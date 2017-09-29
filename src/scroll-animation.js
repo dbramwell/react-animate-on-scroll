@@ -16,6 +16,9 @@ export default class ScrollAnimation extends Component {
 
   constructor(props) {
     super(props);
+    if(typeof window === "undefined"){
+       const window = {}
+    }
     const initialHide = this.props.initiallyVisible ? "" : "hidden";
     this.listener = throttle(this.handleScroll.bind(this), 200);
     this.state = {
