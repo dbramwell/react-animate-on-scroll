@@ -17,30 +17,42 @@ export default class ScrollAnimation extends Component {
   constructor(props) {
     super(props);
     const initialHide = this.props.initiallyVisible ? "" : "hidden";
+    var serverSide = false;
+    if(typeof window === "undefined") {
+        serverSide = true;
+    }
     this.listener = throttle(this.handleScroll.bind(this), 200);
     this.state = {
       classes: "animated",
-      style: { "animationDuration": this.props.duration + "s", visibility: initialHide },
+      style: { "animationDuration": `${this.props.duration}s`, visibility: initialHide },
       lastVisibility: { partially: false, completely: false },
-      timeouts: [],
+      timeouts: [], serverSide: serverSide
     };
-    if (window && window.addEventListener) {
-      window.addEventListener("scroll", this.listener);
+    if(!serverSide){
+        if (window && window.addEventListener) {
+            window.addEventListener("scroll", this.listener);
+        }
     }
     this.getClasses = this.getClasses.bind(this);
   }
 
   componentDidMount() {
-    this.setState({
-      elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-      elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
-    }, this.handleScroll);
-    this.handleScroll();
+    if(!this.state.serverSide) {
+        this.setState({
+            elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
+            elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
+        }, this.handleScroll);
+        this.handleScroll();
+    }
   }
 
   componentWillUnmount() {
-    if (window && window.addEventListener) {
-      window.removeEventListener("scroll", this.listener);
+    try {
+        if (window && window.addEventListener) {
+            window.removeEventListener("scroll", this.listener);
+        }
+    }catch(e){
+        console.log("error unmounting event listener:", e);
     }
   }
 
