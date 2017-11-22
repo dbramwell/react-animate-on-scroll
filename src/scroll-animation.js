@@ -129,7 +129,7 @@ export default class ScrollAnimation extends Component {
 
   render() {
     return (
-      <div ref={(node) => { this.node = node; }} className={this.state.serverSide ? "" : this.state.classes} style={this.state.serverSide ? {} : this.state.style}>
+      <div ref={(node) => { this.node = node; }} className={this.state.classes} style={this.state.style}>
         {this.props.children}
       </div>
     );
