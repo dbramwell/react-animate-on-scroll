@@ -249,6 +249,39 @@ describe("ScrollAnimation -", function () {
     );
   });
 
+  it("does not execute callback when scrolled away mid animation", (done) => {
+    var neverSetToTrue = false;
+    var scrollAnimation = createScrollAnimationOffScreen({
+      animateIn: "zoomIn",
+      duration: 1,
+      onComplete: () => {
+        neverSetToTrue = true
+      }
+    });
+    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.className).toNotContain("zoomIn");
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.node.className.includes("zoomIn")},
+      () => {
+        scrollToTop();
+        ensureNotSatisfied(() => {return neverSetToTrue}, () => {done();}, 1500);
+      }
+    );
+  });
+
+  it("executes callback", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({
+      animateIn: "zoomIn",
+      onComplete: () => {
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        done();
+      }
+    });
+    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.className).toNotContain("zoomIn");
+    scrollIntoCompleteView(scrollAnimation);
+  });
+
   function createScrollAnimationOffScreen(props) {
     var size = props.size ? props.size : 100;
     ReactDOM.render(<div><div style={{height:10000 + "px"}} /><div id="test"/><div style={{height:10000 + "px"}} /></div>, myTestDiv);
@@ -256,7 +289,8 @@ describe("ScrollAnimation -", function () {
     var offset = props.offset ? props.offset : 0;
     var duration = props.duration ? props.duration : 0;
     var delay = props.delay ? props.delay : 0;
-    return ReactDOM.render(<ScrollAnimation animateOnce={props.animateOnce} delay={delay} initiallyVisible={props.initiallyVisible} duration={duration} animateIn={props.animateIn} animateOut={props.animateOut} offset={offset}><div style={{height:size + "px"}}/></ScrollAnimation>, div);
+    var callback = props.onComplete ? props.onComplete : () => {};
+    return ReactDOM.render(<ScrollAnimation onComplete={callback} animateOnce={props.animateOnce} delay={delay} initiallyVisible={props.initiallyVisible} duration={duration} animateIn={props.animateIn} animateOut={props.animateOut} offset={offset}><div style={{height:size + "px"}}/></ScrollAnimation>, div);
   }
 
   function scrollIntoCompleteView(elem) {

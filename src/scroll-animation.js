@@ -26,7 +26,8 @@ export default class ScrollAnimation extends Component {
       classes: "animated",
       style: { "animationDuration": `${this.props.duration}s`, visibility: initialHide },
       lastVisibility: { partially: false, completely: false },
-      timeouts: [], serverSide: serverSide
+      timeouts: [],
+      serverSide: serverSide
     };
     if(!serverSide){
         if (window && window.addEventListener) {
@@ -47,13 +48,19 @@ export default class ScrollAnimation extends Component {
   }
 
   componentWillUnmount() {
-    try {
-        if (window && window.addEventListener) {
-            window.removeEventListener("scroll", this.listener);
-        }
-    }catch(e){
-        console.log("error unmounting event listener:", e);
+    if (window && window.addEventListener) {
+      window.removeEventListener("scroll", this.listener);
     }
+  }
+
+  visibilityHasChanged(visible) {
+    return visible.completely !== this.state.lastVisibility.completely ||
+    visible.partially !== this.state.lastVisibility.partially
+  }
+
+  shouldStartAnimation(visible) {
+    return visible.partially && !visible.completely ||
+    visible.completely && !this.state.lastVisibility.partially
   }
 
   handleScroll() {
@@ -66,16 +73,20 @@ export default class ScrollAnimation extends Component {
     if (this.props.animateOnce && this.state.lastVisibility.completely) {
       return;
     }
-    if (visible.completely !== this.state.lastVisibility.completely || visible.partially !== this.state.lastVisibility.partially) {
+    if (this.visibilityHasChanged(visible)) {
       const style = this.getStyle(visible);
       const classes = this.getClasses(visible);
       var that = this;
-      if (visible.partially) {
+      if (this.shouldStartAnimation(visible)) {
         var timeout = setTimeout(function () {
           that.setState({ classes: classes, style: style, lastVisibility: visible });
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
+        if (this.props.onComplete) {
+          var callback = setTimeout(this.props.onComplete, this.props.delay + this.props.duration * 1000);
+          timeouts.push(callback);
+        }
         this.setState({ timeouts: timeouts });
       } else {
         this.setState({ classes: classes, style: style, lastVisibility: visible });
