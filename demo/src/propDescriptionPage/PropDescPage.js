@@ -11,14 +11,14 @@ class PropDescPage extends Component {
   }
 
   getScrollAnimation() {
-    return (<ScrollAnimation delay={this.props.delay} duration={this.props.duration} animateIn={this.props.animateIn} animateOut={this.props.animateOut} initiallyVisible={this.props.initiallyVisible} animateOnce={this.props.animateOnce}>
+    return (<ScrollAnimation delay={this.props.delay} duration={this.props.duration} animateIn={this.props.animateIn} animateOut={this.props.animateOut} initiallyVisible={this.props.initiallyVisible} animateOnce={this.props.animateOnce} onComplete={this.props.onComplete}>
         <h1>{this.props.property}</h1>
       </ScrollAnimation>)
   }
 
   render() {
 
-    const code = Prism.highlight(jsxToString(this.getScrollAnimation()), Prism.languages.html);
+    const code = Prism.highlight(jsxToString(this.getScrollAnimation(), {useFunctionCode: true}), Prism.languages.html);
 
     return (
       <div className={this.props.color + " page"}>

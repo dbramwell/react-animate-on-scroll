@@ -12,7 +12,8 @@ class Menu extends Component {
         "initiallyVisible",
         "duration",
         "delay",
-        "animateOnce"
+        "animateOnce",
+        "onComplete"
       ],
       hash: ''
     }

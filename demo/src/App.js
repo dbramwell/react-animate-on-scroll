@@ -42,6 +42,9 @@ class App extends Component {
         <ScrollableAnchor id={'animateOnce'}>
           <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce" initiallyVisible={true} />
         </ScrollableAnchor>
+        <ScrollableAnchor id={'onComplete'}>
+          <PropDescPage property="onComplete" animateOnce={true} animateIn="flipInX" onComplete={() => {alert('Animation Complete')}} />
+        </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>
           <Overview />
         </ScrollableAnchor>
