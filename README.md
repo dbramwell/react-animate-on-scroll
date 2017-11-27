@@ -66,6 +66,10 @@ How long to delay the animation for (in milliseconds) once it enters or leaves t
 
 Whether the element should only animate once or not.
 
+**onComplete**
+
+Callback function to run once the animation has completed.
+
 ## Development:
 
 In the project root:
