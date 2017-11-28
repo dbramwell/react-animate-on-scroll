@@ -104,13 +104,13 @@ export default class ScrollAnimation extends Component {
       const style = this.getStyle(visible);
       const classes = this.getClasses(visible);
       var that = this;
-      this.addCallbacks(visible);
       if (this.shouldStartAnimation(visible)) {
         var timeout = setTimeout(function () {
           that.setState({ classes: classes, style: style });
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
+        this.addCallbacks(visible);
         this.setState({ timeouts: timeouts, lastVisibility: visible });
       } else {
         this.setState({ classes: classes, style: style, lastVisibility: visible });
