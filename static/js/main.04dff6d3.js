@@ -29621,7 +29621,7 @@
 	            this.state.properties.map(function (prop, index) {
 	              return _react2.default.createElement(
 	                _reactBootstrap.NavItem,
-	                { active: _this2.state.hash.includes(prop), key: index, href: "#" + prop },
+	                { active: _this2.state.hash.indexOf(prop) > -1, key: index, href: "#" + prop },
 	                prop
 	              );
 	            })
@@ -29631,7 +29631,7 @@
 	            { pullRight: true },
 	            _react2.default.createElement(
 	              _reactBootstrap.NavItem,
-	              { active: this.state.hash.includes("install"), href: '#install' },
+	              { active: this.state.hash.indexOf("install") > -1, href: '#install' },
 	              'Install'
 	            )
 	          )
@@ -69313,4 +69313,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.f4b99d11.js.map
+//# sourceMappingURL=main.04dff6d3.js.map
