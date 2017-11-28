@@ -58,9 +58,36 @@ export default class ScrollAnimation extends Component {
     visible.partially !== this.state.lastVisibility.partially
   }
 
+  isMovingIntoView(visible) {
+    return !this.state.lastVisibility.completely && visible.completely
+  }
+
+  isMovingOutOfView(visible) {
+    return this.state.lastVisibility.completely && !visible.completely && visible.partially
+  }
+
   shouldStartAnimation(visible) {
-    return visible.partially && !visible.completely ||
-    visible.completely && !this.state.lastVisibility.partially
+    return this.isMovingIntoView(visible) || this.isMovingOutOfView(visible)
+  }
+
+  addAnimationCallback(propName) {
+    var tId = setTimeout( () => {
+      this.props[propName](this.isVisible());
+      this.setState({ [propName]: undefined });
+    }, this.props.delay + this.props.duration * 1000);
+    this.setState({ [propName]: tId });
+  }
+
+  addCallbacks(visible) {
+    if (this.props.afterAnimatedIn && this.isMovingIntoView(visible) && (!this.state.afterAnimatedIn || this.state.afterAnimatedInFinished)) {
+      clearTimeout(this.state.afterAnimatedIn);
+      clearTimeout(this.state.afterAnimatedOut);
+      this.addAnimationCallback('afterAnimatedIn'); 
+    } else if (this.props.afterAnimatedOut && this.isMovingOutOfView(visible) && (!this.state.afterAnimatedOut || this.state.afterAnimatedOutFinished)) {
+      clearTimeout(this.state.afterAnimatedIn);
+      clearTimeout(this.state.afterAnimatedOut);
+      this.addAnimationCallback('afterAnimatedOut')
+    }
   }
 
   handleScroll() {
@@ -79,15 +106,12 @@ export default class ScrollAnimation extends Component {
       var that = this;
       if (this.shouldStartAnimation(visible)) {
         var timeout = setTimeout(function () {
-          that.setState({ classes: classes, style: style, lastVisibility: visible });
+          that.setState({ classes: classes, style: style });
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
-        if (this.props.onComplete) {
-          var callback = setTimeout(this.props.onComplete, this.props.delay + this.props.duration * 1000);
-          timeouts.push(callback);
-        }
-        this.setState({ timeouts: timeouts });
+        this.addCallbacks(visible);
+        this.setState({ timeouts: timeouts, lastVisibility: visible });
       } else {
         this.setState({ classes: classes, style: style, lastVisibility: visible });
       }

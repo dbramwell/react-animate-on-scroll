@@ -66,9 +66,37 @@ How long to delay the animation for (in milliseconds) once it enters or leaves t
 
 Whether the element should only animate once or not.
 
-**onComplete**
+**afterAnimatedIn**
 
-Callback function to run once the animation has completed.
+Callback function to run once the animateIn animation has completed. Receives the visibility of the element at time of execution.
+Example:
+```
+function(visible) {
+  if (visible.completely) {
+    // Element is completely visible
+  } else if (visible.partially) {
+    // Element is partially visible
+  } else {
+    // Element is no longer visible
+  }
+}
+```
+
+**afterAnimatedOut**
+
+Callback function to run once the animateOut animation has completed. Receives the visibility of the element at time of execution.
+Example:
+```
+function(visible) {
+  if (visible.completely) {
+    // Element is completely visible
+  } else if (visible.partially) {
+    // Element is partially visible
+  } else {
+    // Element is no longer visible
+  }
+}
+```
 
 ## Development:
 
