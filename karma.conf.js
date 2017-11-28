@@ -2,7 +2,7 @@ var webpack = require('webpack');
 
 module.exports = function (config) {
   var configuration = {
-    browsers: ['ChromeNoSandboxHeadless'],
+    browsers: ['ChromeNoSandboxHeadless', 'IE'],
 
     customLaunchers: {
       Chrome_travis_ci: {

@@ -119,12 +119,12 @@ export default class ScrollAnimation extends Component {
   }
 
   isVisible() {
-    const viewBottom = window.scrollY + window.innerHeight;
-    const viewTop = window.scrollY;
+    const viewBottom = window.pageYOffset + window.innerHeight;
+    const viewTop = window.pageYOffset;
     const offset = this.props.offset;
     const elementBottom = this.state.elementBottom;
     const elementTop = this.state.elementTop;
-    const middleOfView = window.scrollY + (window.innerHeight / 2);
+    const middleOfView = window.pageYOffset + (window.innerHeight / 2);
     if (elementBottom - elementTop > window.innerHeight - (2 * offset)) {
       const completely = (elementTop < middleOfView + offset && elementBottom > middleOfView - offset);
       const partially = completely || (((elementTop > middleOfView + offset && elementTop < viewBottom) ||
@@ -154,7 +154,7 @@ export default class ScrollAnimation extends Component {
 
   getClasses(visible) {
     var classes = "animated";
-    if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut)) {
+    if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.indexOf(this.props.animateIn) > -1 && !this.props.animateOut)) {
       classes += " " + this.props.animateIn;
     } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
       classes += " " + this.props.animateOut;
