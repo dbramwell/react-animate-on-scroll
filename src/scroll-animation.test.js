@@ -14,6 +14,14 @@ describe("ScrollAnimation -", function () {
     window.scrollTo(0, 0);
   });
 
+  afterEach(() => {
+    var test = document.getElementById("test");
+    if (test) {
+      ReactDOM.unmountComponentAtNode(test);
+    }
+    ReactDOM.unmountComponentAtNode(document.getElementById("myDiv"));
+  });
+
   it("renders without problems", function () {
     var root = ReactDOM.render(<ScrollAnimation />, myTestDiv);
     expect(root).toExist();
@@ -262,9 +270,11 @@ describe("ScrollAnimation -", function () {
     });
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
+    console.log("scroll to view");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.className.includes("zoomIn")},
       () => {
+        console.log("scroll to top");
         scrollToTop();
       }
     );

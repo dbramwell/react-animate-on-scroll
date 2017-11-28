@@ -50,6 +50,7 @@ export default class ScrollAnimation extends Component {
 
   componentWillUnmount() {
     if (window && window.addEventListener) {
+      console.log('removing listener')
       window.removeEventListener("scroll", this.listener);
     }
   }
@@ -102,6 +103,7 @@ export default class ScrollAnimation extends Component {
       return;
     }
     if (this.visibilityHasChanged(visible)) {
+      console.log(window.scrollY);
       const style = this.getStyle(visible);
       const classes = this.getClasses(visible);
       var that = this;
