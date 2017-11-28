@@ -36,11 +36,11 @@ class Menu extends Component {
           </Navbar.Header>
           <Nav>
             {this.state.properties.map((prop, index) => {
-              return <NavItem active={this.state.hash.includes(prop)} key={index} href={"#" + prop}>{prop}</NavItem>
+              return <NavItem active={this.state.hash.indexOf(prop) > -1} key={index} href={"#" + prop}>{prop}</NavItem>
             })}
           </Nav>
           <Nav pullRight>
-            <NavItem active={this.state.hash.includes("install")} href="#install">Install</NavItem>
+            <NavItem active={this.state.hash.indexOf("install") > -1} href="#install">Install</NavItem>
           </Nav>
         </Navbar>
       </div>
