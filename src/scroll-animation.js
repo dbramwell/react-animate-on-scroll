@@ -39,7 +39,6 @@ export default class ScrollAnimation extends Component {
 
   componentDidMount() {
     if(!this.state.serverSide) {
-        console.log("Mounting");
         this.setState({
             elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
             elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
@@ -50,7 +49,6 @@ export default class ScrollAnimation extends Component {
 
   componentWillUnmount() {
     if (window && window.addEventListener) {
-      console.log('removing listener')
       window.removeEventListener("scroll", this.listener);
     }
   }
@@ -75,19 +73,19 @@ export default class ScrollAnimation extends Component {
   addAnimationCallback(propName) {
     var tId = setTimeout( () => {
       this.props[propName](this.isVisible());
-      this.setState({ [propName + 'Finished']: true });
+      this.setState({ [propName]: undefined });
     }, this.props.delay + this.props.duration * 1000);
-    this.setState({ [propName]: tId, [propName + 'Finished']: false});
+    this.setState({ [propName]: tId });
   }
 
   addCallbacks(visible) {
     if (this.props.afterAnimatedIn && this.isMovingIntoView(visible) && (!this.state.afterAnimatedIn || this.state.afterAnimatedInFinished)) {
-      console.log("setting in");
+      clearTimeout(this.state.afterAnimatedIn);
       clearTimeout(this.state.afterAnimatedOut);
       this.addAnimationCallback('afterAnimatedIn'); 
     } else if (this.props.afterAnimatedOut && this.isMovingOutOfView(visible) && (!this.state.afterAnimatedOut || this.state.afterAnimatedOutFinished)) {
-      console.log("setting out")
       clearTimeout(this.state.afterAnimatedIn);
+      clearTimeout(this.state.afterAnimatedOut);
       this.addAnimationCallback('afterAnimatedOut')
     }
   }
@@ -103,7 +101,6 @@ export default class ScrollAnimation extends Component {
       return;
     }
     if (this.visibilityHasChanged(visible)) {
-      console.log(window.scrollY);
       const style = this.getStyle(visible);
       const classes = this.getClasses(visible);
       var that = this;

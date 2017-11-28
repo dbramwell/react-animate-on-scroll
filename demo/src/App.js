@@ -44,12 +44,18 @@ class App extends Component {
         </ScrollableAnchor>
         <ScrollableAnchor id={'afterAnimatedIn'}>
           <PropDescPage property="afterAnimatedIn" animateIn="flipInX" afterAnimatedIn={(visible) => {
-            alert('Partially Visible: ' + visible.partially + ', Completely Visible: ' + visible.completely)
+              alert('Animate In Finished:\n' +
+                'Partially Visible: ' + visible.partially + ',\n' +
+                'Completely Visible: ' + visible.completely
+              )
             }} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'afterAnimatedOut'}>
           <PropDescPage property="afterAnimatedOut" initiallyVisible={true} animateOut="flipOutX" afterAnimatedOut={(visible) => {
-            alert('Partially Visible: ' + visible.partially + ', Completely Visible: ' + visible.completely)
+              alert('Animate Out Finished:\n' +
+                'Partially Visible: ' + visible.partially + ',\n' +
+                'Completely Visible: ' + visible.completely
+              )
             }} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>

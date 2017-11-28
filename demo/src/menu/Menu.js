@@ -13,7 +13,8 @@ class Menu extends Component {
         "duration",
         "delay",
         "animateOnce",
-        "onComplete"
+        "afterAnimatedIn",
+        "afterAnimatedOut"
       ],
       hash: ''
     }

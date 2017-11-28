@@ -270,11 +270,9 @@ describe("ScrollAnimation -", function () {
     });
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
-    console.log("scroll to view");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.className.includes("zoomIn")},
       () => {
-        console.log("scroll to top");
         scrollToTop();
       }
     );
@@ -411,7 +409,6 @@ describe("ScrollAnimation -", function () {
       animateIn: "zoomIn",
       afterAnimatedIn: (visible) => {
         runTimes++;
-        console.log('Done ' + runTimes)
         if (runTimes == 2) {
           expect(runTimes).toBe(2);
           done();
@@ -423,6 +420,27 @@ describe("ScrollAnimation -", function () {
             }
           );
         }
+      }
+    });
+    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.className).toNotContain("zoomIn");
+    scrollIntoCompleteView(scrollAnimation);
+  });
+
+  it("callback doesn't run twice when animateOnce specified", (done) => {
+    var runTimes = 0
+    var scrollAnimation = createScrollAnimationOffScreen({
+      animateIn: "zoomIn",
+      animateOnce: true,
+      afterAnimatedIn: (visible) => {
+        runTimes++;
+        scrollToTop();
+        waitFor(() => {return window.scrollY === 0},
+          () => {
+            scrollIntoCompleteView(scrollAnimation);
+            ensureNotSatisfied(() => {return runTimes >= 2}, () => {done();}, 1500);
+          }
+        );
       }
     });
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
