@@ -30,7 +30,7 @@ describe("ScrollAnimation -", function () {
   it("has class matching the 'animateIn' prop when in view", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         expect(scrollAnimation.node.className).toContain("zoomIn");
         done();
@@ -40,7 +40,7 @@ describe("ScrollAnimation -", function () {
   it("has animated class when in view", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         expect(scrollAnimation.node.className).toContain("zoomIn");
         done();
@@ -66,7 +66,7 @@ describe("ScrollAnimation -", function () {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         expect(scrollAnimation.node.className).toContain("zoomIn");
         done();
@@ -77,10 +77,10 @@ describe("ScrollAnimation -", function () {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollToBottom();
-        waitFor(() => {return !scrollAnimation.node.className.indexOf("zoomIn") > -1},
+        waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
           () => {
             expect(scrollAnimation.node.className).toNotContain("zoomIn");
             done();
@@ -92,10 +92,10 @@ describe("ScrollAnimation -", function () {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollToTop();
-        waitFor(() => {return !scrollAnimation.node.className.indexOf("zoomIn") > -1},
+        waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
           () => {
             expect(scrollAnimation.node.className).toNotContain("zoomIn");
             done();
@@ -106,7 +106,7 @@ describe("ScrollAnimation -", function () {
   it("is visible when in view", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomInTest"});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return !scrollAnimation.node.style.visibility.indexOf("hidden") > -1},
+    waitFor(() => {return scrollAnimation.node.style.visibility.indexOf("hidden") === -1},
       () => {
         expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
         done();
@@ -130,10 +130,10 @@ describe("ScrollAnimation -", function () {
   it("when visible and scrolled partially out of view, class matching 'animateOut' is added", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOut: "zoomOut"});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollIntoPartialViewTop(scrollAnimation);
-        waitFor(() => {return !scrollAnimation.node.className.indexOf("zoomIn") > -1},
+        waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
           () => {
             expect(scrollAnimation.node.className).toNotContain("zoomIn");
             expect(scrollAnimation.node.className).toContain("zoomOut");
@@ -169,7 +169,7 @@ describe("ScrollAnimation -", function () {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "bounceInDown", duration: 5});
     var initialTop = scrollAnimation.node.getBoundingClientRect().top;
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("bounceInDown") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("bounceInDown")},
       () => {
         expect(scrollAnimation.node.getBoundingClientRect().top).toBeLessThan(initialTop);
         window.scrollTo(0, window.pageYOffset + 4);
@@ -188,7 +188,7 @@ describe("ScrollAnimation -", function () {
   it("if the element is bigger than the screen then animation happens when element covers more than 50% of the screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "bounceInDown", size: 2000});
     scrollLargeElementSoOverHalfCoversPage(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("bounceInDown") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("bounceInDown")},
       () => {
         expect(scrollAnimation.node.className).toContain("bounceInDown");
         expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
@@ -201,7 +201,7 @@ describe("ScrollAnimation -", function () {
     scrollIntoCompleteView(scrollAnimation);
     setTimeout(function() {
       expect(scrollAnimation.node.className).toNotContain("bounceInDown");
-      waitFor(() => {return scrollAnimation.node.className.indexOf("bounceInDown") > -1},
+      waitFor(() => {return scrollAnimation.node.classList.contains("bounceInDown")},
         () => {
           expect(scrollAnimation.node.className).toContain("bounceInDown");
           done();
@@ -224,10 +224,10 @@ describe("ScrollAnimation -", function () {
   it("if element is given animate with delay, when scrolled out of view animation class is removed instantly", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "fadeIn", delay: 200});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("fadeIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("fadeIn")},
       () => {
         scrollToTop();
-        waitFor(() => {return !scrollAnimation.node.className.indexOf("fadeIn") > -1},
+        waitFor(() => {return !scrollAnimation.node.classList.contains("fadeIn")},
           () => {
             expect(scrollAnimation.node.className).toNotContain("fadeIn");
             expect(scrollAnimation.node.style.visibility).toBe("hidden");
@@ -241,12 +241,12 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         expect(scrollAnimation.node.className).toContain("zoomIn");
         expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
         scrollToTop();
-        ensureNotSatisfied(() => {return !scrollAnimation.node.className.indexOf("zoomIn") > -1},
+        ensureNotSatisfied(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
           () => {
             expect(scrollAnimation.node.className).toContain("zoomIn");
             expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
@@ -271,7 +271,7 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollToTop();
       }
@@ -293,10 +293,10 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomOut");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollIntoPartialViewTop(scrollAnimation);
-        waitFor(() => {return scrollAnimation.node.className.indexOf("zoomOut") > -1},
+        waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
           () => {
             scrollToTop();
           }
@@ -334,10 +334,10 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomOut");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollIntoPartialViewTop(scrollAnimation);
-        waitFor(() => {return scrollAnimation.node.className.indexOf("zoomOut") > -1},
+        waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
           () => {
             scrollIntoCompleteView(scrollAnimation);
           }
@@ -359,7 +359,7 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollIntoPartialViewTop(scrollAnimation);
       }
@@ -381,7 +381,7 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.style.visibility).toBe("hidden");
     expect(scrollAnimation.node.className).toNotContain("zoomOut");
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.className.indexOf("zoomIn") > -1},
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         scrollIntoPartialViewTop(scrollAnimation);
       }
@@ -414,7 +414,7 @@ describe("ScrollAnimation -", function () {
           done();
         } else {
           scrollToTop();
-          waitFor(() => {return !scrollAnimation.node.className.indexOf("zoomIn") > -1},
+          waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
             () => {
               scrollIntoCompleteView(scrollAnimation);
             }
