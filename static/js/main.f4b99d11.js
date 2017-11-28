@@ -8901,12 +8901,12 @@
 	  }, {
 	    key: "isVisible",
 	    value: function isVisible() {
-	      var viewBottom = window.scrollY + window.innerHeight;
-	      var viewTop = window.scrollY;
+	      var viewBottom = window.pageYOffset + window.innerHeight;
+	      var viewTop = window.pageYOffset;
 	      var offset = this.props.offset;
 	      var elementBottom = this.state.elementBottom;
 	      var elementTop = this.state.elementTop;
-	      var middleOfView = window.scrollY + window.innerHeight / 2;
+	      var middleOfView = window.pageYOffset + window.innerHeight / 2;
 	      if (elementBottom - elementTop > window.innerHeight - 2 * offset) {
 	        var completely = elementTop < middleOfView + offset && elementBottom > middleOfView - offset;
 	        var partially = completely || elementTop > middleOfView + offset && elementTop < viewBottom || elementBottom < middleOfView - offset && elementBottom > viewTop;
@@ -8935,7 +8935,7 @@
 	    key: "getClasses",
 	    value: function getClasses(visible) {
 	      var classes = "animated";
-	      if (visible.completely && this.props.animateIn || visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut) {
+	      if (visible.completely && this.props.animateIn || visible.partially && this.state.classes.indexOf(this.props.animateIn) > -1 && !this.props.animateOut) {
 	        classes += " " + this.props.animateIn;
 	      } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
 	        classes += " " + this.props.animateOut;
@@ -69313,4 +69313,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.e6e9fd85.js.map
+//# sourceMappingURL=main.f4b99d11.js.map
