@@ -30,18 +30,54 @@ export default class ScrollAnimation extends Component {
       serverSide: serverSide
     };
     if(!serverSide){
-        if (window && window.addEventListener) {
-            window.addEventListener("scroll", this.listener);
-        }
+      if (window && window.addEventListener) {
+        window.addEventListener("scroll", this.listener);
+      }
     }
     this.getClasses = this.getClasses.bind(this);
   }
 
+  getElementTop() {
+    return this.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+  }
+
+  getElementBottom() {
+    return this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop();
+  }
+
+  getViewportTop() {
+    return window.pageYOffset + this.props.offset;
+  }
+
+  getViewportBottom() {
+    return window.pageYOffset + window.innerHeight - this.props.offset;
+  }
+
+  isInViewport(y) {
+    return y >= this.getViewportTop() && y <= this.getViewportBottom();
+  }
+
+  isTopInViewport() {
+    return this.isInViewport(this.getElementTop());
+  }
+
+  isBottomInViewport() {
+    return this.isInViewport(this.getElementBottom());
+  }
+
+  isAboveViewport(y) {
+    return y < this.getViewportTop();
+  }
+
+  isTopAboveViewport() {
+    return this.isAboveViewport(this.getElementTop());
+  }
+
   componentDidMount() {
     if(!this.state.serverSide) {
-        this.setState({
-            elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-            elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
+      this.setState({
+        elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
+        elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
         }, this.handleScroll);
         this.handleScroll();
     }
