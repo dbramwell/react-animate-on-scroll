@@ -24,7 +24,8 @@ module.exports = function (config) {
     singleRun: true, //just run once by default
     frameworks: [ 'mocha' ], //use the mocha test framework
     files: [
-      'tests.webpack.js'
+      'tests.webpack.js',
+      {pattern: '*.jpg', watched: false, included: false, served: true},
     ],
     preprocessors: {
       'tests.webpack.js': [ 'webpack', 'sourcemap' ] //preprocess with webpack and our sourcemap loader
