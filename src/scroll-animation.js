@@ -69,8 +69,61 @@ export default class ScrollAnimation extends Component {
     return y < this.getViewportTop();
   }
 
+  isBelowViewport(y) {
+    return y > this.getViewportBottom();
+  }
+
   isTopAboveViewport() {
     return this.isAboveViewport(this.getElementTop());
+  }
+
+  isBottomBelowViewport() {
+    return this.isBelowViewport(this.getElementBottom());
+  }
+
+  isCompletelyVisible() {
+    return (this.isTopInViewport() && this.isBottomInViewport()) ||
+           (this.isTopAboveViewport() && this.isBottomBelowViewport());
+  }
+
+  isPartiallyVisibleAbove() {
+    return this.isBottomInViewport() && !this.isTopInViewport();
+  }
+
+  isPartiallyVisibleBelow() {
+    return !this.isBottomInViewport() && this.isTopInViewport();
+  }
+
+  isPartiallyVisible() {
+    return this.isTopInViewport() || this.isBottomInViewport();
+  }
+
+  getVisibility() {
+    return {
+      partially: this.isPartiallyVisible(),
+      completely: this.isCompletelyVisible(),
+      partiallyBelow: this.isPartiallyVisibleBelow(),
+      partiallyAbove: this.isPartiallyVisibleAbove()
+    };
+  }
+
+  isMovingIntoView(previousVis, currentVis) {
+    return (
+      !previousVis.partially &&
+      !previousVis.completely && (
+        currentVis.partially ||
+        currentVis.completely
+      )
+    );
+  }
+
+  getClasses(previousVis, currentVis) {
+    const classes = "animated"
+    if (this.isMovingIntoView(previousVis, currentVis)) {
+      return `${classes} ${this.props.animateIn}`
+    } else {
+      return classes;
+    }
   }
 
   componentDidMount() {
@@ -94,9 +147,9 @@ export default class ScrollAnimation extends Component {
     visible.partially !== this.state.lastVisibility.partially
   }
 
-  isMovingIntoView(visible) {
-    return !this.state.lastVisibility.completely && visible.completely
-  }
+  // isMovingIntoView(visible) {
+  //   return !this.state.lastVisibility.completely && visible.completely
+  // }
 
   isMovingOutOfView(visible) {
     return this.state.lastVisibility.completely && !visible.completely && visible.partially
@@ -188,15 +241,15 @@ export default class ScrollAnimation extends Component {
     return style;
   }
 
-  getClasses(visible) {
-    var classes = "animated";
-    if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.indexOf(this.props.animateIn) > -1 && !this.props.animateOut)) {
-      classes += " " + this.props.animateIn;
-    } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
-      classes += " " + this.props.animateOut;
-    }
-    return classes;
-  }
+  // getClasses(visible) {
+  //   var classes = "animated";
+  //   if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.indexOf(this.props.animateIn) > -1 && !this.props.animateOut)) {
+  //     classes += " " + this.props.animateIn;
+  //   } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
+  //     classes += " " + this.props.animateOut;
+  //   }
+  //   return classes;
+  // }
 
   render() {
     return (
