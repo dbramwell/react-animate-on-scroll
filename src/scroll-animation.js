@@ -16,33 +16,34 @@ export default class ScrollAnimation extends Component {
 
   constructor(props) {
     super(props);
-    const initialHide = this.props.initiallyVisible ? "" : "hidden";
-    var serverSide = false;
-    if(typeof window === "undefined") {
-        serverSide = true;
-    }
-    this.listener = throttle(this.handleScroll.bind(this), 200);
+    this.serverSide = typeof window === "undefined" ? true : false;
+    this.listener = throttle(this.handleScroll.bind(this), 50);
+    this.visibility = {
+      partially: false,
+      completely: false,
+      offScreen: true
+    };
     this.state = {
       classes: "animated",
-      style: { "animationDuration": `${this.props.duration}s`, visibility: initialHide },
-      lastVisibility: { partially: false, completely: false },
-      timeouts: [],
-      serverSide: serverSide
+      style: {
+        animationDuration: `${this.props.duration}s`,
+        visibility: this.props.initiallyVisible ? "" : "hidden"
+      },
+      timeouts: []
     };
-    if(!serverSide){
+    if(!this.serverSide){
       if (window && window.addEventListener) {
         window.addEventListener("scroll", this.listener);
       }
     }
-    this.getClasses = this.getClasses.bind(this);
   }
 
   getElementTop() {
-    return this.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    return this.node.getBoundingClientRect().top + window.pageYOffset;
   }
 
   getElementBottom() {
-    return this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop();
+    return this.node.getBoundingClientRect().bottom + window.pageYOffset;
   }
 
   getViewportTop() {
@@ -86,24 +87,27 @@ export default class ScrollAnimation extends Component {
            (this.isTopAboveViewport() && this.isBottomBelowViewport());
   }
 
-  isPartiallyVisibleAbove() {
-    return this.isBottomInViewport() && !this.isTopInViewport();
-  }
-
-  isPartiallyVisibleBelow() {
-    return !this.isBottomInViewport() && this.isTopInViewport();
-  }
-
   isPartiallyVisible() {
     return this.isTopInViewport() || this.isBottomInViewport();
+  }
+
+  isOffScreen() {
+    return this.isAboveScreen() || this.isBelowScreen();
+  }
+
+  isAboveScreen() {
+    return this.getElementBottom() < window.pageYOffset;
+  }
+
+  isBelowScreen() {
+    return this.getElementBottom() > window.pageYOffset + window.pageYOffset;
   }
 
   getVisibility() {
     return {
       partially: this.isPartiallyVisible(),
       completely: this.isCompletelyVisible(),
-      partiallyBelow: this.isPartiallyVisibleBelow(),
-      partiallyAbove: this.isPartiallyVisibleAbove()
+      offScreen: this.isOffScreen()
     };
   }
 
@@ -121,18 +125,18 @@ export default class ScrollAnimation extends Component {
     const classes = "animated"
     if (this.isMovingIntoView(previousVis, currentVis)) {
       return `${classes} ${this.props.animateIn}`
+    } else if (this.props.animateOut) {
+      return `${classes} ${this.props.animateOut}`
+    } else if (currentVis.offScreen && !this.props.animateOnce) {
+      return `${classes}`
     } else {
-      return classes;
+      return `${classes} ${this.props.animateIn}`
     }
   }
 
   componentDidMount() {
-    if(!this.state.serverSide) {
-      this.setState({
-        elementBottom: this.node.getBoundingClientRect().bottom + ScrollAnimation.posTop(),
-        elementTop: this.node.getBoundingClientRect().top + ScrollAnimation.posTop()
-        }, this.handleScroll);
-        this.handleScroll();
+    if(!this.serverSide) {
+      this.handleScroll();
     }
   }
 
@@ -142,9 +146,10 @@ export default class ScrollAnimation extends Component {
     }
   }
 
-  visibilityHasChanged(visible) {
-    return visible.completely !== this.state.lastVisibility.completely ||
-    visible.partially !== this.state.lastVisibility.partially
+  visibilityHasChanged(previousVis, currentVis) {
+    return previousVis.partially !== currentVis.partially ||
+      previousVis.completely !== currentVis.completely ||
+      previousVis.offScreen !== currentVis.offScreen;
   }
 
   // isMovingIntoView(visible) {
@@ -180,31 +185,31 @@ export default class ScrollAnimation extends Component {
   }
 
   handleScroll() {
-    const visible = this.isVisible();
-    if (!visible.partially) {
-      this.state.timeouts.forEach(function (tid) {
-        clearTimeout(tid);
-      })
-    }
-    if (this.props.animateOnce && this.state.lastVisibility.completely) {
-      return;
-    }
-    if (this.visibilityHasChanged(visible)) {
-      const style = this.getStyle(visible);
-      const classes = this.getClasses(visible);
-      var that = this;
-      if (this.shouldStartAnimation(visible)) {
-        var timeout = setTimeout(function () {
-          that.setState({ classes: classes, style: style });
-        }, this.props.delay);
-        var timeouts = this.state.timeouts.slice()
-        timeouts.push(timeout);
-        this.addCallbacks(visible);
-        this.setState({ timeouts: timeouts, lastVisibility: visible });
-      } else {
-        this.setState({ classes: classes, style: style, lastVisibility: visible });
-      }
-    }
+    // const visible = this.isVisible();
+    // if (!visible.partially) {
+    //   this.state.timeouts.forEach(function (tid) {
+    //     clearTimeout(tid);
+    //   })
+    // }
+    // if (this.props.animateOnce && this.state.lastVisibility.completely) {
+    //   return;
+    // }
+    // if (this.visibilityHasChanged(visible)) {
+    //   const style = this.getStyle(visible);
+    //   const classes = this.getClasses(visible);
+    //   var that = this;
+    //   if (this.shouldStartAnimation(visible)) {
+    //     var timeout = setTimeout(function () {
+    //       that.setState({ classes: classes, style: style });
+    //     }, this.props.delay);
+    //     var timeouts = this.state.timeouts.slice()
+    //     timeouts.push(timeout);
+    //     this.addCallbacks(visible);
+    //     this.setState({ timeouts: timeouts, lastVisibility: visible });
+    //   } else {
+    //     this.setState({ classes: classes, style: style, lastVisibility: visible });
+    //   }
+    // }
   }
 
   isVisible() {

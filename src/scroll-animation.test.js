@@ -176,59 +176,36 @@ describe("ScrollAnimation - ", function () {
     expect(scrollAnimation.isPartiallyVisible()).toBeTruthy();
   });
 
-  it("isPartiallyVisibleAbove returns true if bottom of element is in viewport but not top", () => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    expect(scrollAnimation.isPartiallyVisibleAbove()).toBeFalsy();
-    scrollIntoPartialViewBottom(scrollAnimation);
-    expect(scrollAnimation.isPartiallyVisibleAbove()).toBeTruthy();
-    scrollIntoPartialViewTop(scrollAnimation);
-    expect(scrollAnimation.isPartiallyVisibleAbove()).toBeFalsy();
-  });
-
-  it("isPartiallyVisibleBelow returns true if top of element is in viewport but not bottom", () => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    expect(scrollAnimation.isPartiallyVisibleBelow()).toBeFalsy();
-    scrollIntoPartialViewTop(scrollAnimation);
-    expect(scrollAnimation.isPartiallyVisibleBelow()).toBeTruthy();
-    scrollIntoPartialViewBottom(scrollAnimation);
-    expect(scrollAnimation.isPartiallyVisibleBelow()).toBeFalsy();
-  });
-
   it("getVisibility returns the current visibility of the element", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     var visibility = scrollAnimation.getVisibility();
     expect(visibility.partially).toBeFalsy();
     expect(visibility.completely).toBeFalsy();
-    expect(visibility.partiallyBelow).toBeFalsy();
-    expect(visibility.partiallyAbove).toBeFalsy();
+    expect(visibility.offScreen).toBeTruthy();
 
     scrollIntoPartialViewTop(scrollAnimation);
     visibility = scrollAnimation.getVisibility();
     expect(visibility.partially).toBeTruthy();
     expect(visibility.completely).toBeFalsy();
-    expect(visibility.partiallyBelow).toBeTruthy();
-    expect(visibility.partiallyAbove).toBeFalsy();
+    expect(visibility.offScreen).toBeFalsy();
 
     scrollIntoCompleteView(scrollAnimation);
     visibility = scrollAnimation.getVisibility();
     expect(visibility.partially).toBeTruthy();
     expect(visibility.completely).toBeTruthy();
-    expect(visibility.partiallyBelow).toBeFalsy();
-    expect(visibility.partiallyAbove).toBeFalsy();
+    expect(visibility.offScreen).toBeFalsy();
 
     scrollIntoPartialViewBottom(scrollAnimation);
     visibility = scrollAnimation.getVisibility();
     expect(visibility.partially).toBeTruthy();
     expect(visibility.completely).toBeFalsy();
-    expect(visibility.partiallyBelow).toBeFalsy();
-    expect(visibility.partiallyAbove).toBeTruthy();
+    expect(visibility.offScreen).toBeFalsy();
 
     scrollToBottom();
     visibility = scrollAnimation.getVisibility();
     expect(visibility.partially).toBeFalsy();
     expect(visibility.completely).toBeFalsy();
-    expect(visibility.partiallyBelow).toBeFalsy();
-    expect(visibility.partiallyAbove).toBeFalsy();
+    expect(visibility.offScreen).toBeTruthy();
   });
 
   it("isMovingIntoView returns true when element moves from outside viewport into partial view above", () => {
@@ -236,14 +213,12 @@ describe("ScrollAnimation - ", function () {
     var prevVis = {
       partially: false,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: false
+      offScreen: true
     };
     var nextVis = {
       partially: true,
       completely: false,
-      partiallyAbove: true,
-      partiallyBelow: false
+      offScreen: false
     };
     expect(scrollAnimation.isMovingIntoView(prevVis, nextVis)).toBeTruthy();
   });
@@ -253,14 +228,12 @@ describe("ScrollAnimation - ", function () {
     var prevVis = {
       partially: false,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: false
+      offScreen: true
     };
     var nextVis = {
       partially: true,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: true
+      offScreen: false
     };
     expect(scrollAnimation.isMovingIntoView(prevVis, nextVis)).toBeTruthy();
   });
@@ -270,14 +243,12 @@ describe("ScrollAnimation - ", function () {
     var prevVis = {
       partially: false,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: false
+      offScreen: true
     };
     var nextVis = {
       partially: true,
       completely: false,
-      partiallyAbove: true,
-      partiallyBelow: false
+      offScreen: false
     };
     expect(scrollAnimation.getClasses(prevVis, nextVis)).toBe("animated zoomIn");
   });
@@ -287,33 +258,134 @@ describe("ScrollAnimation - ", function () {
     var prevVis = {
       partially: false,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: false
+      offScreen: true
     };
     var nextVis = {
       partially: true,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: true
+      offScreen: false
     };
     expect(scrollAnimation.getClasses(prevVis, nextVis)).toBe("animated zoomIn");
   });
 
-  it("getClasses returns 'animated' when element is moved out of view and does not have animateOnce prop", () => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+  it("getClasses returns 'animated zoomOut' when element is moved out of view and does not have animateOnce prop and has animateOut set", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOut: "zoomOut"});
     var prevVis = {
       partially: true,
       completely: false,
-      partiallyAbove: true,
-      partiallyBelow: false
+      offScreen: false
     };
     var nextVis = {
       partially: false,
       completely: false,
-      partiallyAbove: false,
-      partiallyBelow: false
+      offScreen: true
+    };
+    expect(scrollAnimation.getClasses(prevVis, nextVis)).toBe("animated zoomOut");
+  });
+
+  it("getClasses returns 'animated zoomIn' when element is moved out of viewport and does not have animateOnce prop and does not have animateOut set", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    var prevVis = {
+      partially: true,
+      completely: false,
+      offScreen: false
+    };
+    var nextVis = {
+      partially: false,
+      completely: false,
+      offScreen: false
+    };
+    expect(scrollAnimation.getClasses(prevVis, nextVis)).toBe("animated zoomIn");
+  });
+
+  it("getClasses returns 'animated' when element is moved off screen and does not have animateOnce prop", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    var prevVis = {
+      partially: true,
+      completely: false,
+      offScreen: false
+    };
+    var nextVis = {
+      partially: false,
+      completely: false,
+      offScreen: true
     };
     expect(scrollAnimation.getClasses(prevVis, nextVis)).toBe("animated");
+  });
+
+  it("getClasses returns 'animated zoomIn' when element is moved off screen and does have animateOnce prop", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true});
+    var prevVis = {
+      partially: true,
+      completely: false,
+      offScreen: false
+    };
+    var nextVis = {
+      partially: false,
+      completely: false,
+      offScreen: true
+    };
+    expect(scrollAnimation.getClasses(prevVis, nextVis)).toBe("animated zoomIn");
+  });
+
+  it("isOffScreen returns true if whole of element is off screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isOffScreen()).toBeTruthy();
+  });
+
+  it("isOffScreen returns false if part of element is on screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollIntoCompleteView(scrollAnimation);
+    expect(scrollAnimation.isOffScreen()).toBeFalsy();
+  });
+
+  it("isAboveScreen returns true if bottom of element is above top of screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollToBottom();
+    expect(scrollAnimation.isAboveScreen()).toBeTruthy();
+  });
+
+  it("isAboveScreen returns false if bottom of element is below top of screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isAboveScreen()).toBeFalsy();
+  });
+
+  it("isBelowScreen returns true if top of element is below bottom of screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isBelowScreen()).toBeTruthy();
+  });
+
+  it("isBelowScreen returns false if top of element is above bottom of screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollToBottom();
+    expect(scrollAnimation.isBelowScreen()).toBeFalsy();
+  });
+
+  it("visibilityHasChanged should show any changes in visibility", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true});
+    var prevVis = {
+      partially: false,
+      completely: false,
+      offScreen: false
+    };
+    var nextVis = {
+      partially: false,
+      completely: false,
+      offScreen: false
+    };
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeFalsy();
+
+    prevVis.partially = true;
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeTruthy();
+
+    prevVis.partially = false;
+    prevVis.completely = true;
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeTruthy();
+
+    prevVis.completely = false;
+    prevVis.offScreen = true;
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeTruthy();
+
   });
 
   // it("has class matching the 'animateIn' prop when in view", (done) => {
@@ -750,24 +822,24 @@ describe("ScrollAnimation - ", function () {
   }
 
   function scrollIntoCompleteView(elem) {
-    var top = elem.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     var elemHeight = elem.node.getBoundingClientRect().height;
     var offset = (window.innerHeight - elemHeight)/2;
     window.scrollTo(0, top - offset);
   }
 
   function scrollLargeElementSoOverHalfCoversPage(elem) {
-    var top = elem.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     window.scrollTo(0, top - 20);
   }
 
   function scrollIntoPartialViewTop(elem) {
-    var top = elem.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     window.scrollTo(0, top - window.innerHeight + 2);
   }
 
   function scrollIntoPartialViewBottom(elem) {
-    var bottom = elem.node.getBoundingClientRect().bottom + ScrollAnimation.posTop();
+    var bottom = elem.node.getBoundingClientRect().bottom + window.pageYOffset;
     window.scrollTo(0, bottom - 2);
   }
 
