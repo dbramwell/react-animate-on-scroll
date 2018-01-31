@@ -38,13 +38,14 @@ h1 {
     color: #f35626;
     font-size: 8rem;
     line-height: 1;
-    margin-bottom: 50px
+    margin: 0px
 }
 
 h2 {
   color: #d13404;
   font-size: 4rem;
   line-height: 1;
+  margin: 0px;
 }
 
 pre {
