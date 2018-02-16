@@ -134,7 +134,7 @@ describe("ScrollAnimation - ", function () {
     expect(visibility.onScreen).toBeFalsy();
 
     scrollIntoPartialViewTop(scrollAnimation);
-    waitFor(() => {return scrollAnimation.getVisibility().onScreen.toBeTruthy()},
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen},
       () => {
         visibility = scrollAnimation.getVisibility();
         expect(visibility.inViewport).toBeFalsy();
@@ -150,7 +150,7 @@ describe("ScrollAnimation - ", function () {
     expect(visibility.onScreen).toBeFalsy();
 
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.getVisibility().onScreen.toBeTruthy()},
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen},
       () => {
         visibility = scrollAnimation.getVisibility();
         expect(visibility.inViewport).toBeTruthy();
@@ -166,7 +166,7 @@ describe("ScrollAnimation - ", function () {
     expect(visibility.onScreen).toBeFalsy();
 
     scrollIntoPartialViewBottom(scrollAnimation);
-    waitFor(() => {return scrollAnimation.getVisibility().onScreen.toBeTruthy()},
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen},
       () => {
         visibility = scrollAnimation.getVisibility();
         expect(visibility.inViewport).toBeFalsy();
@@ -193,10 +193,13 @@ describe("ScrollAnimation - ", function () {
     });
   });
 
-  it("isAboveScreen returns true if bottom of element is above top of screen", () => {
+  it("isAboveScreen returns true if bottom of element is above top of screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollToBottom();
-    expect(scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
+    waitFor(() => {return crollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)}, () => {
+      expect(scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
+      done();
+    });
   });
 
   it("isAboveScreen returns false if bottom of element is below top of screen", () => {
@@ -209,10 +212,13 @@ describe("ScrollAnimation - ", function () {
     expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeTruthy();
   });
 
-  it("isBelowScreen returns false if top of element is above bottom of screen", () => {
+  it("isBelowScreen returns false if top of element is above bottom of screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollToBottom();
-    expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeFalsy();
+    waitFor(() => {return !scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())}, () => {
+      expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeFalsy();
+      done();
+    });
   });
 
   it("visibilityHasChanged should show any changes in visibility", () => {
