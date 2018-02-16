@@ -7,6 +7,7 @@ import ScrollableAnchor from 'react-scrollable-anchor';
 import Overview from './overview/Overview';
 import ScrollAnimation from 'react-animate-on-scroll';
 import "../node_modules/animate.css/animate.min.css";
+import "prismjs/components/prism-jsx.min";
 
 class App extends Component {
   render() {
@@ -43,19 +44,19 @@ class App extends Component {
           <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce" initiallyVisible={true} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'afterAnimatedIn'}>
-          <PropDescPage property="afterAnimatedIn" animateIn="flipInX" afterAnimatedIn={(visible) => {
-              alert('Animate In Finished:\n' +
-                'Partially Visible: ' + visible.partially + ',\n' +
-                'Completely Visible: ' + visible.completely
-              )
+          <PropDescPage property="afterAnimatedIn" animateIn="flipInX" afterAnimatedIn={(v) => {
+              var t = "Animate In finished.\n";
+              t += `v.onScreen: ${v.onScreen}\n`;
+              t += `v.inViewport: ${v.inViewport}`;
+              alert(t);
             }} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'afterAnimatedOut'}>
-          <PropDescPage property="afterAnimatedOut" initiallyVisible={true} animateOut="flipOutX" afterAnimatedOut={(visible) => {
-              alert('Animate Out Finished:\n' +
-                'Partially Visible: ' + visible.partially + ',\n' +
-                'Completely Visible: ' + visible.completely
-              )
+          <PropDescPage property="afterAnimatedOut" initiallyVisible={true} animateOut="flipOutX" afterAnimatedOut={(v) => {
+              var t = "Animate Out finished.\n";
+              t += `v.onScreen: ${v.onScreen}\n`;
+              t += `v.inViewport: ${v.inViewport}`;
+              alert(t);
             }} />
         </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>
