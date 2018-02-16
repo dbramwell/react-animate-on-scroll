@@ -36,19 +36,17 @@ import ScrollAnimation from 'react-animate-on-scroll';
 </ScrollAnimation>
 ```
 ## Properties:
-**offset** - default 100
+**offset** - default 150
 
-The "viewport" is by default 100 pixels from the top and bottom of the screen. When an element is completely contained within the "viewport", animateIn is triggered. When the element is leaving the "viewport", animateOut is triggered. This can be overridden by setting the offset property.
-
-If the element is bigger than the viewport animateIn is triggered when the position of the top of the element is is less than the position of the middle of the screen plus the offset, and the position of the bottom of the element is greater than the middle of the screen minus the offset. AnimateOut happens when the element moves out of these constraints.
+The "viewport" is by default 150 pixels from the top and bottom of the screen. When part of an element is within the "viewport", animateIn is triggered. When no part of the element is in the "viewport", animateOut is triggered. This size of the "viewport" can be overridden by setting the offset property.
 
 **animateIn**
 
-Any animation from [animate.css](https://daneden.github.io/animate.css/). The Animation triggers when the element is contained within the "viewport" (see offset property for more details on this).
+Any css animation defined against a class, be it from [animate.css](https://daneden.github.io/animate.css/) or an animation that you have created yourself. The Animation triggers when the element enters the "viewport" (see offset property for more details on this).
 
 **animateOut**
 
-Any animation from [animate.css](https://daneden.github.io/animate.css/). The Animation triggers when the element is leaving the "viewport" (see offset property for more details on this).
+Any css animation defined against a class, be it from [animate.css](https://daneden.github.io/animate.css/) or an animation that you have created yourself. The Animation triggers when the element is leaving the "viewport" (see offset property for more details on this).
 
 **duration** - default 1
 
@@ -56,7 +54,7 @@ Animation duration in seconds.
 
 **initiallyVisible** - default false
 
-Whether the element should be visible to begin with or not. If animateIn is an entrance animation, then should probably be false.
+Whether the element should be visible to begin with or not.
 
 **delay** - default 0
 
@@ -72,10 +70,10 @@ Callback function to run once the animateIn animation has completed. Receives th
 Example:
 ```
 function(visible) {
-  if (visible.completely) {
-    // Element is completely visible
-  } else if (visible.partially) {
-    // Element is partially visible
+  if (visible.inViewport) {
+    // Part of the element is in the viewport (the area defined by the offset property)
+  } else if (visible.onScreen) {
+    // Part of the element is visible on the screen
   } else {
     // Element is no longer visible
   }
@@ -88,15 +86,23 @@ Callback function to run once the animateOut animation has completed. Receives t
 Example:
 ```
 function(visible) {
-  if (visible.completely) {
-    // Element is completely visible
-  } else if (visible.partially) {
-    // Element is partially visible
+  if (visible.inViewport) {
+    // Part of the element is in the viewport (the area defined by the offset property)
+  } else if (visible.onScreen) {
+    // Part of the element is visible on the screen
   } else {
     // Element is no longer visible
   }
 }
 ```
+
+## Changes:
+#### Version 2.0.0
+* The "visible" object passed to the afterAnimatedIn and afterAnimatedOut callbacks has the properties "onScreen" which is true if the element is on the screen, and "inViewport", which is true if the element is in the viewport. visible.completely and visible.partially will no longer work.
+* Should now work on mobile devices.
+* Should work more consistently with dynamically sized elements (eg, images).
+* Elements now "animateIn" when any part of them is in the viewport, not only when they are fully contained in the viewport.
+* The viewport now has a default offset of 150px from the top and bottom of the screen, rather than 100px.
 
 ## Development:
 
