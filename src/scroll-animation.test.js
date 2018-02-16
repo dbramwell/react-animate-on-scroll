@@ -92,12 +92,16 @@ describe("ScrollAnimation - ", function () {
     expect(scrollAnimation.isBelowViewport(1000)).toBeTruthy();
   });
 
-  it("inViewport returns true if element is contained in the viewport", () => {
+  it("inViewport returns true if element is contained in the viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     scrollIntoCompleteView(scrollAnimation);
     const top = scrollAnimation.getElementTop();
     const bottom = top + scrollAnimation.node.clientHeight;
-    expect(scrollAnimation.inViewport(top, bottom)).toBeTruthy();
+    waitFor(() => {return scrollAnimation.inViewport(top, bottom)},
+      () => {
+        expect(scrollAnimation.inViewport(top, bottom)).toBeTruthy();
+        done();
+      });
   });
 
   it("inViewport returns true if element top is above the viewport and element bottom is below the viewport", () => {
