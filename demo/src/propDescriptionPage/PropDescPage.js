@@ -18,14 +18,14 @@ class PropDescPage extends Component {
 
   render() {
 
-    const code = Prism.highlight(jsxToString(this.getScrollAnimation(), {useFunctionCode: true}), Prism.languages.html);
+    const code = Prism.highlight(jsxToString(this.getScrollAnimation(), {useFunctionCode: true}), Prism.languages.jsx);
 
     return (
-      <div className={this.props.color + " page"}>
+      <div className={"page"}>
       {this.props.children}
       {this.getScrollAnimation()}
-        <pre className="language-markup">
-          <code className="language-markup">
+        <pre>
+          <code className="language-jsx">
             <div dangerouslySetInnerHTML={{__html: code}}/>
           </code>
         </pre>

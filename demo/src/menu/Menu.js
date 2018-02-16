@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
 
 class Menu extends Component {
 
@@ -28,20 +28,25 @@ class Menu extends Component {
   render() {
     return (
       <div id="menu">
-        <Navbar inverse fluid fixedTop>
+        <Navbar inverse collapseOnSelect fixedTop>
           <Navbar.Header>
             <Navbar.Brand>
               <a href="#home">React Animate On Scroll</a>
             </Navbar.Brand>
+            <Navbar.Toggle />
           </Navbar.Header>
-          <Nav>
-            {this.state.properties.map((prop, index) => {
-              return <NavItem active={this.state.hash.indexOf(prop) > -1} key={index} href={"#" + prop}>{prop}</NavItem>
-            })}
-          </Nav>
-          <Nav pullRight>
-            <NavItem active={this.state.hash.indexOf("install") > -1} href="#install">Install</NavItem>
-          </Nav>
+          <Navbar.Collapse>
+            <Nav>
+              <NavDropdown title="Properties" id="properties">
+              {this.state.properties.map((prop, index) => {
+                return <MenuItem active={this.state.hash.indexOf(prop) > -1} key={index} onSelect={() => window.location.hash = `#${prop}`}>{prop}</MenuItem>
+              })}
+              </NavDropdown>
+            </Nav>
+            <Nav pullRight>
+              <NavItem active={this.state.hash.indexOf("install") > -1} onSelect={() => window.location.hash = "#install"}>Install</NavItem>
+            </Nav>
+          </Navbar.Collapse>
         </Navbar>
       </div>
     );

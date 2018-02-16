@@ -29,25 +29,35 @@ div.page:nth-child(even) {
 }
 
 @media screen and (max-width: 768px) {
-    #menu {
-        display: none !important;
-    }
 }
 
 h1 {
-    color: #f35626;
-    font-size: 8rem;
-    line-height: 1;
-    margin-bottom: 50px
+  color: #f35626;
+  font-size: 8rem;
+  margin: 0px
 }
 
 h2 {
   color: #d13404;
   font-size: 4rem;
-  line-height: 1;
+  margin: 0px;
 }
 
 pre {
   font-size: 1.5rem;
-  width: 40%;
+  width: 90%;
+}
+
+@media screen and (max-width: 768px) {
+  pre {
+    font-size: 1rem;
+  }
+
+  h1 {
+    font-size: 4.5rem;
+  }
+
+  h2 {
+    font-size: 3rem;
+  }
 }

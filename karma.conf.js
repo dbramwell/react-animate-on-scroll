@@ -5,10 +5,6 @@ module.exports = function (config) {
     browsers: ['ChromeNoSandboxHeadless', 'IE'],
 
     customLaunchers: {
-      Chrome_travis_ci: {
-            base: 'Chrome',
-            flags: ['--no-sandbox']
-      },
       ChromeNoSandboxHeadless: {
         base: 'Chrome',
         flags: [
@@ -24,7 +20,8 @@ module.exports = function (config) {
     singleRun: true, //just run once by default
     frameworks: [ 'mocha' ], //use the mocha test framework
     files: [
-      'tests.webpack.js'
+      'tests.webpack.js',
+      {pattern: '*.jpg', watched: false, included: false, served: true},
     ],
     preprocessors: {
       'tests.webpack.js': [ 'webpack', 'sourcemap' ] //preprocess with webpack and our sourcemap loader
@@ -51,7 +48,7 @@ module.exports = function (config) {
   };
 
   if(process.env.TRAVIS){
-    configuration.browsers = ['Chrome_travis_ci'];
+    configuration.browsers = ['ChromeNoSandboxHeadless'];
   }
   config.set(configuration);
 };

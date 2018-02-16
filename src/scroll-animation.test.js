@@ -4,12 +4,12 @@ import "animate.css/animate.min.css";
 var expect = require("expect");
 import ScrollAnimation from "./scroll-animation";
 
-describe("ScrollAnimation -", function () {
+describe("ScrollAnimation - ", function () {
 
   var myTestDiv;
 
   beforeEach(() => {
-    document.body.innerHTML += "<div id='myDiv'></div>";
+    document.body.innerHTML = "<div id='myDiv'></div>";
     myTestDiv = document.getElementById("myDiv");
     window.scrollTo(0, 0);
   });
@@ -27,17 +27,338 @@ describe("ScrollAnimation -", function () {
     expect(root).toExist();
   });
 
-  it("has class matching the 'animateIn' prop when in view", (done) => {
+  it("getElementTop returns location of top of element", function () {
+    var root = ReactDOM.render(<ScrollAnimation />, myTestDiv);
+    expect(root.getElementTop()).toBe(8);
+  });
+
+  it("getElementTop returns location of top of element when element contains an image after image has loaded", function (done) {
+    var root = ReactDOM.render(<ScrollAnimation><img style={{verticalAlign: "middle"}} src="base/test.jpg"/></ScrollAnimation>, myTestDiv);
+    setTimeout(() => {
+      expect(root.getElementTop()).toBe(8);
+      done();
+    }, 100);
+  });  
+
+  it("getViewportTop returns location of top of viewport", () => {
+    var root = ReactDOM.render(<ScrollAnimation />, myTestDiv);
+    expect(root.getViewportTop()).toBe(150);
+  });
+
+  it("getViewportTop returns location of top of viewport when given specific offset", () => {
+    var root = ReactDOM.render(<ScrollAnimation offset={50} />, myTestDiv);
+    expect(root.getViewportTop()).toBe(50);
+  });
+
+  it("getViewportTop returns location of top of viewport when given specific offset after scrolling", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 50});
+    window.scrollTo(0, 500);
+    expect(scrollAnimation.getViewportTop()).toBe(550);
+  });
+
+  it("getViewportBottom returns location of bottom of viewport", () => {
+    var root = ReactDOM.render(<ScrollAnimation />, myTestDiv);
+    expect(root.getViewportBottom()).toBe(450);
+  });
+
+  it("getViewportBottom returns location of bottom of viewport when given specific offset", () => {
+    var root = ReactDOM.render(<ScrollAnimation offset={50} />, myTestDiv);
+    expect(root.getViewportBottom()).toBe(550);
+  });
+
+  it("getViewportBottom returns location of bottom of viewport when given specific offset after scrolling", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 50});
+    window.scrollTo(0, 500);
+    expect(scrollAnimation.getViewportBottom()).toBe(1050);
+  });
+
+  it("isAboveViewport returns false if value is below viewport", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isAboveViewport(1000)).toBeFalsy();
+  });
+
+  it("isAboveViewport returns true if value is above viewport", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
+    expect(scrollAnimation.isAboveViewport('0')).toBeTruthy();
+  });
+
+  it("isBelowViewport returns false if value is above viewport", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isBelowViewport('0')).toBeFalsy();
+  });
+
+  it("isBelowViewport returns true if value is below viewport", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isBelowViewport(1000)).toBeTruthy();
+  });
+
+  it("inViewport returns true if element is contained in the viewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
+    waitFor(() => {return scrollAnimation.inViewport(scrollAnimation.getElementTop(), scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)},
       () => {
-        expect(scrollAnimation.node.className).toContain("zoomIn");
+        expect(scrollAnimation.inViewport(scrollAnimation.getElementTop(), scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
         done();
       });
   });
 
-  it("has animated class when in view", (done) => {
+  it("inViewport returns true if element top is above the viewport and element bottom is below the viewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 200, size: 4000});
+    scrollIntoCompleteView(scrollAnimation);
+    const top = scrollAnimation.getElementTop();
+    const bottom = top + scrollAnimation.node.clientHeight;
+    waitFor(() => {return scrollAnimation.inViewport(top, bottom)},
+      () => {
+        expect(scrollAnimation.inViewport(top, bottom)).toBeTruthy();
+        done();
+      });
+  });
+
+  it("inViewport returns false if element not completely visible", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 200});
+    const top = scrollAnimation.getElementTop();
+    const bottom = top + scrollAnimation.node.clientHeight;
+    expect(scrollAnimation.inViewport(top, bottom)).toBeFalsy();
+    scrollIntoPartialViewTop(scrollAnimation);
+    expect(scrollAnimation.inViewport(top, bottom)).toBeFalsy();
+    scrollIntoPartialViewBottom(scrollAnimation);
+    expect(scrollAnimation.inViewport(top, bottom)).toBeFalsy();
+  });
+
+  it("getVisibility returns the current visibility of the element when onScreen at top but not inViewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
+    var visibility = scrollAnimation.getVisibility();
+    expect(visibility.inViewport).toBeFalsy();
+    expect(visibility.onScreen).toBeFalsy();
+
+    scrollIntoPartialViewTop(scrollAnimation);
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen},
+      () => {
+        visibility = scrollAnimation.getVisibility();
+        expect(visibility.inViewport).toBeFalsy();
+        expect(visibility.onScreen).toBeTruthy();
+        done();
+      });
+  });
+
+  it("getVisibility returns the current visibility of the element when onScreen and inViewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
+    var visibility = scrollAnimation.getVisibility();
+    expect(visibility.inViewport).toBeFalsy();
+    expect(visibility.onScreen).toBeFalsy();
+
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen},
+      () => {
+        visibility = scrollAnimation.getVisibility();
+        expect(visibility.inViewport).toBeTruthy();
+        expect(visibility.onScreen).toBeTruthy();
+        done();
+      });
+  });
+
+  it("getVisibility returns the current visibility of the element when onScreen at bottom but not inViewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn",offset: 100});
+    var visibility = scrollAnimation.getVisibility();
+    expect(visibility.inViewport).toBeFalsy();
+    expect(visibility.onScreen).toBeFalsy();
+
+    scrollIntoPartialViewBottom(scrollAnimation);
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen},
+      () => {
+        visibility = scrollAnimation.getVisibility();
+        expect(visibility.inViewport).toBeFalsy();
+        expect(visibility.onScreen).toBeTruthy();
+        done();
+      });
+  });
+
+  it("onScreen returns false if whole of element is off screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    const top = scrollAnimation.getElementTop();
+    const bottom = top + scrollAnimation.node.clientHeight;
+    expect(scrollAnimation.onScreen(top, bottom)).toBeFalsy();
+  });
+
+  it("onScreen returns true if part of element is on screen", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    const top = scrollAnimation.getElementTop();
+    const bottom = top + scrollAnimation.node.clientHeight;
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.onScreen(top, bottom)}, () => {
+      expect(scrollAnimation.onScreen(top, bottom)).toBeTruthy();
+      done();
+    });
+  });
+
+  it("isAboveScreen returns true if bottom of element is above top of screen", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollToBottom();
+    waitFor(() => {return scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)}, () => {
+      expect(scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
+      done();
+    });
+  });
+
+  it("isAboveScreen returns false if bottom of element is below top of screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isAboveScreen()).toBeFalsy();
+  });
+
+  it("isBelowScreen returns true if top of element is below bottom of screen", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeTruthy();
+  });
+
+  it("isBelowScreen returns false if top of element is above bottom of screen", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollToBottom();
+    waitFor(() => {return !scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())}, () => {
+      expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeFalsy();
+      done();
+    });
+  });
+
+  it("visibilityHasChanged should show any changes in visibility", () => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true});
+    var prevVis = {
+      inViewport: false,
+      onScreen: false
+    };
+    var nextVis = {
+      inViewport: false,
+      onScreen: false
+    };
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeFalsy();
+
+    prevVis.inViewport = true;
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeTruthy();
+
+    prevVis.inViewport = false;
+    prevVis.onScreen = true;
+    expect(scrollAnimation.visibilityHasChanged(prevVis, nextVis)).toBeTruthy();
+  });
+
+  it("animateIn() unhides and adds animateIn class", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollAnimation.animateIn();
+    setTimeout(() => {
+      expect(scrollAnimation.state.classes).toContain("zoomIn");
+      expect(scrollAnimation.state.style.opacity).toNotBe(0);
+      done();
+    }, 10);
+  });
+
+  it("animateIn() unhides and adds animateIn class after delay", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", delay: 500});
+    scrollAnimation.animateIn();
+    setTimeout(() => {
+      expect(scrollAnimation.state.classes).toNotContain("zoomIn");
+      expect(scrollAnimation.state.style.opacity).toBe(0);
+      setTimeout(() => {
+        expect(scrollAnimation.state.classes).toContain("zoomIn");
+        expect(scrollAnimation.state.style.opacity).toNotBe(0);
+        done();
+      }, 100);
+    }, 400);
+  });
+
+  it("animateOut() unhides and adds animateOut class", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateOut: "zoomOut", duration: 0.5});
+    scrollAnimation.animateOut();
+    setTimeout(() => {
+      expect(scrollAnimation.state.classes).toContain("zoomOut");
+      expect(scrollAnimation.state.style.opacity).toNotBe(0);
+      done();
+    }, 100);
+  });
+
+  it("animateOut() unhides and adds animateIn class after delay", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateOut: "zoomOut", delay: 500});
+    scrollAnimation.animateOut();
+    setTimeout(() => {
+      expect(scrollAnimation.state.classes).toNotContain("zoomOut");
+      expect(scrollAnimation.state.style.opacity).toBe(0);
+      setTimeout(() => {
+        expect(scrollAnimation.state.classes).toContain("zoomOut");
+        expect(scrollAnimation.state.style.opacity).toNotBe(0);
+        done();
+      }, 100);
+    }, 400);
+  });
+
+  it("when animateOut has finished, animateOut class is removed and style is set back to hidden", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateOut: "zoomOut", duration: 0.2});
+    scrollAnimation.animateOut();
+    setTimeout(() => {
+      expect(scrollAnimation.state.classes).toContain("zoomOut");
+      expect(scrollAnimation.state.style.opacity).toNotBe(0);
+      setTimeout(() => {
+        expect(scrollAnimation.state.classes).toNotContain("zoomOut");
+        expect(scrollAnimation.state.style.opacity).toBe(0);
+        done();
+      }, 200)
+    }, 10);
+  });
+
+  it("if animating out finished, but element is back in viewport, animateIn class should be given", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOut: "zoomOut", duration: 0.2});
+    scrollAnimation.animateOut();
+    setTimeout(() => {
+      expect(scrollAnimation.state.classes).toContain("zoomOut");
+      expect(scrollAnimation.state.style.opacity).toNotBe(0);
+      scrollIntoCompleteView(scrollAnimation);
+      setTimeout(() => {
+        expect(scrollAnimation.state.classes).toContain("zoomIn");
+        expect(scrollAnimation.state.style.opacity).toNotBe(0);
+        done();
+      }, 250);
+    }, 10);
+  });
+
+  it("callback executed after animateOut finished", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateOut: "zoomOut"});
+    scrollAnimation.animateOut(() => {
+      expect(scrollAnimation.state.classes).toNotContain("zoomOut");
+      expect(scrollAnimation.state.style.opacity).toBe(0);
+      done();
+    });
+  });
+
+  it("callback executed after animateIn finished", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+    scrollAnimation.animateIn(() => {
+      expect(scrollAnimation.state.classes).toNotContain("animateIn");
+      expect(scrollAnimation.state.style.opacity).toNotBe(0);
+      done();
+    });
+  });
+
+  it("while animating in, this.animating is set to true", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", duration: 0.2});
+    scrollAnimation.animateIn()
+    setTimeout(() => {
+      expect(scrollAnimation.animating).toBeTruthy();
+      setTimeout(() => {
+        expect(scrollAnimation.animating).toBeFalsy();
+        done();
+      }, 200);
+    }, 10);
+  });
+
+  it("while animating out, this.animating is set to true", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateOut: "zoomOut", duration: 0.2});
+    scrollAnimation.animateOut()
+    setTimeout(() => {
+      expect(scrollAnimation.animating).toBeTruthy();
+      setTimeout(() => {
+        expect(scrollAnimation.animating).toBeFalsy();
+        done();
+      }, 200);
+    }, 10);
+  });
+
+  it("has class matching the 'animateIn' prop when in viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
@@ -52,8 +373,8 @@ describe("ScrollAnimation -", function () {
     expect(scrollAnimation.node.className).toBe("animated");
   });
 
-  it("does not have class matching the 'animateIn' prop when not in complete view", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+  it("does not have class matching the 'animateIn' prop when on screen but not in viewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoPartialViewTop(scrollAnimation);
     setTimeout(function() {
@@ -62,7 +383,7 @@ describe("ScrollAnimation -", function () {
     }, 200);
   });
 
-  it("class matching 'animateIn' is added when animation is scrolled into comlete view", (done) => {
+  it("class matching 'animateIn' is added when animation is scrolled into complete view", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
@@ -79,11 +400,15 @@ describe("ScrollAnimation -", function () {
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
-        scrollToBottom();
-        waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        waitFor(() => {return !scrollAnimation.animating},
           () => {
-            expect(scrollAnimation.node.className).toNotContain("zoomIn");
-            done();
+            scrollToBottom();
+            waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+              () => {
+                expect(scrollAnimation.node.className).toNotContain("zoomIn");
+                done();
+              });
           });
       });
   });
@@ -94,56 +419,63 @@ describe("ScrollAnimation -", function () {
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
-        scrollToTop();
-        waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        waitFor(() => {return !scrollAnimation.animating},
           () => {
-            expect(scrollAnimation.node.className).toNotContain("zoomIn");
-            done();
+            scrollToTop();
+            waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+              () => {
+                expect(scrollAnimation.node.className).toNotContain("zoomIn");
+                done();
+              });
           });
       });
   });
 
-  it("is visible when in view", (done) => {
+  it("is visible when in viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomInTest"});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.style.visibility.indexOf("hidden") === -1},
+    waitFor(() => {return scrollAnimation.node.style.opacity !== '0'},
       () => {
-        expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
+        expect(scrollAnimation.node.style.opacity).toNotBe('0');
         done();
       });
   });
 
   it("is hidden when not in view", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
   });
 
-  it("is invisible when partly in view and already invisible", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+  it("is invisible when on screen but not in viewport and already invisible", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     scrollIntoPartialViewTop(scrollAnimation);
     setTimeout(function() {
-      expect(scrollAnimation.node.style.visibility).toBe("hidden");
+      expect(scrollAnimation.node.style.opacity).toBe('0');
       done()
     }, 200)
   });
 
-  it("when visible and scrolled partially out of view, class matching 'animateOut' is added", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOut: "zoomOut"});
+  it("when visible and scrolled partially out of viewport, class matching 'animateOut' is added", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOut: "zoomOut", offset: 100});
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
-        scrollIntoPartialViewTop(scrollAnimation);
-        waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+        waitFor(() => {return !scrollAnimation.animating},
           () => {
-            expect(scrollAnimation.node.className).toNotContain("zoomIn");
-            expect(scrollAnimation.node.className).toContain("zoomOut");
-            done();
+            scrollIntoPartialViewTop(scrollAnimation);
+            waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
+              () => {
+                expect(scrollAnimation.node.className).toNotContain("zoomIn");
+                expect(scrollAnimation.node.className).toContain("zoomOut");
+                done();
+              });
           });
       });
   });
 
-  it("is visible when partly in view and already visible", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
+  it("element remains visible when on screen, not in viewport, but already visible", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.style.visibility === ""},
       () => {
@@ -182,16 +514,16 @@ describe("ScrollAnimation -", function () {
 
   it("if set with initiallyVisible prop then is visible when created off screen", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "bounceInDown", initiallyVisible: true});
-    expect(scrollAnimation.node.style.visibility).toBe("");
+    expect(scrollAnimation.node.style.opacity).toBe('1');
   });
 
-  it("if the element is bigger than the screen then animation happens when element covers more than 50% of the screen", (done) => {
+  it("if the element is bigger than the screen then animation happens when element enters viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "bounceInDown", size: 2000});
     scrollLargeElementSoOverHalfCoversPage(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("bounceInDown")},
       () => {
         expect(scrollAnimation.node.className).toContain("bounceInDown");
-        expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
+        expect(scrollAnimation.node.style.opacity).toNotBe('0');
         done();
       });
   });
@@ -221,35 +553,20 @@ describe("ScrollAnimation -", function () {
     }, 199);
   });
 
-  it("if element is given animate with delay, when scrolled out of view animation class is removed instantly", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "fadeIn", delay: 200});
-    scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.node.classList.contains("fadeIn")},
-      () => {
-        scrollToTop();
-        waitFor(() => {return !scrollAnimation.node.classList.contains("fadeIn")},
-          () => {
-            expect(scrollAnimation.node.className).toNotContain("fadeIn");
-            expect(scrollAnimation.node.style.visibility).toBe("hidden");
-            done();
-          }, 100);
-      });
-  });
-
   it("only animates once with 'animateOnce' property", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         expect(scrollAnimation.node.className).toContain("zoomIn");
-        expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
+        expect(scrollAnimation.node.style.opacity).toNotBe('0');
         scrollToTop();
         ensureNotSatisfied(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
           () => {
             expect(scrollAnimation.node.className).toContain("zoomIn");
-            expect(scrollAnimation.node.style.visibility).toNotBe("hidden");
+            expect(scrollAnimation.node.style.opacity).toNotBe('0');
             done();
           }
         );
@@ -257,18 +574,18 @@ describe("ScrollAnimation -", function () {
     );
   });
 
-  it("executes afterAnimatedIn callback when scrolled away mid animation, with visible.partially and visible.completely equal to false", (done) => {
+  it("executes afterAnimatedIn callback when scrolled away mid animation, with visible.onScreen and visible.inViewport equal to false", (done) => {
     var neverSetToTrue = false;
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
-      duration: 1,
+      duration: 0.1,
       afterAnimatedIn: (visible) => {
-        expect(visible.partially).toBeFalsy();
-        expect(visible.completely).toBeFalsy();
+        expect(visible.onScreen).toBeFalsy();
+        expect(visible.inViewport).toBeFalsy();
         done();
       }
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
@@ -278,85 +595,94 @@ describe("ScrollAnimation -", function () {
     );
   });
 
-  it("executes afterAnimatedOut callback when scrolled away mid animation, with visible.partially and visible.completely equal to false", (done) => {
+  it("executes afterAnimatedOut callback when scrolled away mid animation, with visible.onScreen and visible.inViewport equal to false", (done) => {
     var neverSetToTrue = false;
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
       animateOut: "zoomOut",
-      duration: 1,
+      duration: 0.1,
       afterAnimatedOut: (visible) => {
-        expect(visible.partially).toBeFalsy();
-        expect(visible.completely).toBeFalsy();
+        expect(visible.onScreen).toBeFalsy();
+        expect(visible.inViewport).toBeFalsy();
         done();
-      }
+      },
+      offset: 100
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomOut");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
-        scrollIntoPartialViewTop(scrollAnimation);
-        waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
+        waitFor(() => {return !scrollAnimation.animating},
           () => {
-            scrollToTop();
+            scrollIntoPartialViewTop(scrollAnimation);
+            waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
+              () => {
+                scrollToTop();
+              }
+            );
           }
         );
       }
     );
   });
 
-  it("executes afterAnimatedIn callback and visible.partially and visible.completely equal to true", (done) => {
+  it("executes afterAnimatedIn callback and visible.onScreen and visible.inViewport equal to true", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
       afterAnimatedIn: (visible) => {
-        expect(visible.partially).toBeTruthy();
-        expect(visible.completely).toBeTruthy();
+        expect(visible.inViewport).toBeTruthy();
+        expect(visible.onScreen).toBeTruthy();
         done();
       }
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
   });
 
-  it("executes afterAnimatedOut callback and visible.partially and visible.completely equal to true", (done) => {
+  it("executes afterAnimatedOut callback and visible.onScreen and visible.inViewport equal to true", (done) => {
     var neverSetToTrue = false;
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
       animateOut: "zoomOut",
-      duration: 1,
       afterAnimatedOut: (visible) => {
-        expect(visible.partially).toBeTruthy();
-        expect(visible.completely).toBeTruthy();
+        expect(visible.inViewport).toBeTruthy();
+        expect(visible.onScreen).toBeTruthy();
         done();
-      }
+      },
+      offset: 100
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomOut");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
-        scrollIntoPartialViewTop(scrollAnimation);
-        waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
+        waitFor(() => {return !scrollAnimation.animating},
           () => {
-            scrollIntoCompleteView(scrollAnimation);
+            scrollIntoPartialViewTop(scrollAnimation);
+            waitFor(() => {return scrollAnimation.node.classList.contains("zoomOut")},
+              () => {
+                scrollIntoCompleteView(scrollAnimation);
+              }
+            );
           }
         );
       }
     );
   });
 
-  it("executes afterAnimatedIn callback and visible.partially is true and visible.completely is false when only visible partially", (done) => {
+  it("executes afterAnimatedIn callback and visible.onScreen is true and visible.inViewport is false when only visible partially", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
-      duration: 1,
       afterAnimatedIn: (visible) => {
-        expect(visible.partially).toBeTruthy();
-        expect(visible.completely).toBeFalsy();
+        expect(visible.onScreen).toBeTruthy();
+        expect(visible.inViewport).toBeFalsy();
         done();
-      }
+      },
+      offset: 100
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
@@ -366,24 +692,28 @@ describe("ScrollAnimation -", function () {
     );
   });
 
-  it("executes afterAnimatedOut callback when partially visible and visible.partially is true and visible.completely is false", (done) => {
+  it("executes afterAnimatedOut callback when partially visible and visible.onScreen is true and visible.inViewport is false", (done) => {
     var neverSetToTrue = false;
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
       animateOut: "zoomOut",
-      duration: 1,
       afterAnimatedOut: (visible) => {
-        expect(visible.partially).toBeTruthy();
-        expect(visible.completely).toBeFalsy();
+        expect(visible.onScreen).toBeTruthy();
+        expect(visible.inViewport).toBeFalsy();
         done();
-      }
+      },
+      offset: 100
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomOut");
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
-        scrollIntoPartialViewTop(scrollAnimation);
+        waitFor(() => {return !scrollAnimation.animating}, 
+          () => {
+            scrollIntoPartialViewTop(scrollAnimation);
+          }
+        );
       }
     );
   });
@@ -392,12 +722,12 @@ describe("ScrollAnimation -", function () {
     var neverSetToTrue = false;
     var scrollAnimation = createScrollAnimationOffScreen({
       animateIn: "zoomIn",
-      duration: 1,
       afterAnimatedIn: () => {
         neverSetToTrue = true;
-      }
+      },
+      offset: 100
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoPartialViewTop(scrollAnimation);
     ensureNotSatisfied(() => {return neverSetToTrue}, () => {done();}, 1500);
@@ -422,7 +752,7 @@ describe("ScrollAnimation -", function () {
         }
       }
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
   });
@@ -443,9 +773,34 @@ describe("ScrollAnimation -", function () {
         );
       }
     });
-    expect(scrollAnimation.node.style.visibility).toBe("hidden");
+    expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
     scrollIntoCompleteView(scrollAnimation);
+  });
+
+  it("after animating out the animate out class is removed", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOut: "zoomOut", offset: 100});
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
+      () => {
+        waitFor(() => {return !scrollAnimation.animating},
+          () => {
+            scrollIntoPartialViewTop(scrollAnimation);
+            waitFor(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+              () => {
+                expect(scrollAnimation.node.className).toNotContain("zoomIn");
+                expect(scrollAnimation.node.className).toContain("zoomOut");
+                waitFor(() => {return !scrollAnimation.node.classList.contains("zoomOut")},
+                  () => {
+                    expect(scrollAnimation.node.className).toNotContain("zoomOut");
+                    done();
+                  }
+                );
+              }
+            );
+          }
+        );
+      });
   });
 
   function createScrollAnimationOffScreen(props) {
@@ -461,24 +816,24 @@ describe("ScrollAnimation -", function () {
   }
 
   function scrollIntoCompleteView(elem) {
-    var top = elem.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     var elemHeight = elem.node.getBoundingClientRect().height;
-    var offset = (window.innerHeight - elemHeight)/2;
+    var offset = elem.props.offset;
     window.scrollTo(0, top - offset);
   }
 
   function scrollLargeElementSoOverHalfCoversPage(elem) {
-    var top = elem.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     window.scrollTo(0, top - 20);
   }
 
   function scrollIntoPartialViewTop(elem) {
-    var top = elem.node.getBoundingClientRect().top + ScrollAnimation.posTop();
+    var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     window.scrollTo(0, top - window.innerHeight + 2);
   }
 
   function scrollIntoPartialViewBottom(elem) {
-    var bottom = elem.node.getBoundingClientRect().bottom + ScrollAnimation.posTop();
+    var bottom = elem.node.getBoundingClientRect().bottom + window.pageYOffset;
     window.scrollTo(0, bottom - 2);
   }
 

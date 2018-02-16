@@ -26,14 +26,14 @@ class Home extends Component {
 
   render() {
 
-    const code = Prism.highlight(jsxToString(this.getScrollAnimationHeader()) + "\n" + jsxToString(this.getScrollAnimationLink()), Prism.languages.html);
+    const code = Prism.highlight(jsxToString(this.getScrollAnimationHeader()) + "\n" + jsxToString(this.getScrollAnimationLink()), Prism.languages.jsx);
 
     return (
       <div className="page home">
       {this.getScrollAnimationHeader()}
       {this.getScrollAnimationLink()}
-        <pre className="language-markup">
-          <code className="language-markup">
+        <pre>
+          <code className="language-jsx">
             <div dangerouslySetInnerHTML={{__html: code}}/>
           </code>
         </pre>

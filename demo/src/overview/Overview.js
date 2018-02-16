@@ -12,7 +12,7 @@ class Overview extends Component {
   }
 
   getScrollAnimationHeader() {
-    return (<ScrollAnimation animateIn="zoomIn" animateOut="zoomOut" duration={3}>
+    return (<ScrollAnimation animateIn="zoomIn" animateOut="zoomOut">
         <h1>Install</h1>
       </ScrollAnimation>)
   }
@@ -30,10 +30,12 @@ class Overview extends Component {
 
     return (
       <div className="page">
-      {this.getScrollAnimationHeader()}
-      {this.getScrollAnimationLink()}
-        <pre className="language-markup">
-          <code className="language-markup">
+        <div>
+          {this.getScrollAnimationHeader()}
+          {this.getScrollAnimationLink()}
+        </div>
+        <pre>
+          <code className="language-bash">
             <div dangerouslySetInnerHTML={{__html: code}}/>
           </code>
         </pre>
