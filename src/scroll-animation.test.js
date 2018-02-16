@@ -95,11 +95,9 @@ describe("ScrollAnimation - ", function () {
   it("inViewport returns true if element is contained in the viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     scrollIntoCompleteView(scrollAnimation);
-    const top = scrollAnimation.getElementTop();
-    const bottom = top + scrollAnimation.node.clientHeight;
-    waitFor(() => {return scrollAnimation.inViewport(top, bottom)},
+    waitFor(() => {return scrollAnimation.inViewport(scrollAnimation.getElementTop(), scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)},
       () => {
-        expect(scrollAnimation.inViewport(top, bottom)).toBeTruthy();
+        expect(scrollAnimation.inViewport(scrollAnimation.getElementTop(), scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
         done();
       });
   });
@@ -820,7 +818,7 @@ describe("ScrollAnimation - ", function () {
   function scrollIntoCompleteView(elem) {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     var elemHeight = elem.node.getBoundingClientRect().height;
-    var offset = (window.innerHeight - elemHeight)/2;
+    var offset = elem.props.offset;
     window.scrollTo(0, top - offset);
   }
 

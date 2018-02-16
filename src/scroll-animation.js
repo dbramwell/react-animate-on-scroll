@@ -32,10 +32,10 @@ export default class ScrollAnimation extends Component {
     var yPos = 0;
     var elm = this.node;
     while (elm) {
-      yPos += (elm.offsetTop - elm.scrollTop + elm.clientTop);
+      yPos += (elm.offsetTop + elm.clientTop);
       elm = elm.offsetParent;
     }
-    return yPos + window.pageYOffset;
+    return yPos;
   }
 
   getViewportTop() {
