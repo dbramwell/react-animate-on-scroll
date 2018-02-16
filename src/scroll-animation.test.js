@@ -787,30 +787,42 @@ describe("ScrollAnimation - ", function () {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     var elemHeight = elem.node.getBoundingClientRect().height;
     var offset = (window.innerHeight - elemHeight)/2;
-    window.scrollTo(0, top - offset);
+    setTimeout(() => {
+      window.scrollTo(0, top - offset);
+    }, 1);
   }
 
   function scrollLargeElementSoOverHalfCoversPage(elem) {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
-    window.scrollTo(0, top - 20);
+    setTimeout(() => {
+      window.scrollTo(0, top - 20);
+    }, 1);
   }
 
   function scrollIntoPartialViewTop(elem) {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
-    window.scrollTo(0, top - window.innerHeight + 2);
+    setTimeout(() => {
+      window.scrollTo(0, top - window.innerHeight + 2);
+    }, 1);
   }
 
   function scrollIntoPartialViewBottom(elem) {
     var bottom = elem.node.getBoundingClientRect().bottom + window.pageYOffset;
-    window.scrollTo(0, bottom - 2);
+    setTimeout(() => {
+      window.scrollTo(0, bottom - 2);
+    }, 1);
   }
 
   function scrollToTop() {
-    window.scrollTo(0, 0);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 1);
   }
 
   function scrollToBottom() {
-    window.scrollTo(0,document.body.scrollHeight);
+    setTimeout(() => {
+      window.scrollTo(0,document.body.scrollHeight);
+    }, 1);
   }
 
   function waitFor(condition, callback, timeToWait = 1000, time = 0) {
