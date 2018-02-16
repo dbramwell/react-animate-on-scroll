@@ -6,7 +6,7 @@ export default class ScrollAnimation extends Component {
 
   constructor(props) {
     super(props);
-    this.serverSide = typeof window === "undefined" ? true : false;
+    this.serverSide = typeof window === "undefined";
     this.listener = throttle(this.handleScroll.bind(this), 50);
     this.visibility = {
       onScreen: false,
