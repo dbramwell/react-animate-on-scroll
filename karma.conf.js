@@ -5,17 +5,6 @@ module.exports = function (config) {
     browsers: ['ChromeNoSandboxHeadless', 'IE'],
 
     customLaunchers: {
-      Chrome_travis_ci: {
-        base: 'Chrome',
-        flags: [
-          '--no-sandbox',
-          // See https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md
-          '--headless',
-          '--disable-gpu',
-          // Without a remote debugging port, Google Chrome exits immediately.
-          ' --remote-debugging-port=9222',
-        ]
-      },
       ChromeNoSandboxHeadless: {
         base: 'Chrome',
         flags: [
@@ -59,7 +48,7 @@ module.exports = function (config) {
   };
 
   if(process.env.TRAVIS){
-    configuration.browsers = ['Chrome_travis_ci'];
+    configuration.browsers = ['ChromeNoSandboxHeadless'];
   }
   config.set(configuration);
 };
