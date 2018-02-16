@@ -128,7 +128,7 @@ describe("ScrollAnimation - ", function () {
   });
 
   it("getVisibility returns the current visibility of the element when onScreen at top but not inViewport", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn",offset: 100});
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     var visibility = scrollAnimation.getVisibility();
     expect(visibility.inViewport).toBeFalsy();
     expect(visibility.onScreen).toBeFalsy();
@@ -144,7 +144,7 @@ describe("ScrollAnimation - ", function () {
   });
 
   it("getVisibility returns the current visibility of the element when onScreen and inViewport", (done) => {
-    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn",offset: 100});
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     var visibility = scrollAnimation.getVisibility();
     expect(visibility.inViewport).toBeFalsy();
     expect(visibility.onScreen).toBeFalsy();
@@ -196,7 +196,7 @@ describe("ScrollAnimation - ", function () {
   it("isAboveScreen returns true if bottom of element is above top of screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollToBottom();
-    waitFor(() => {return crollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)}, () => {
+    waitFor(() => {return scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)}, () => {
       expect(scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
       done();
     });
@@ -821,42 +821,30 @@ describe("ScrollAnimation - ", function () {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
     var elemHeight = elem.node.getBoundingClientRect().height;
     var offset = (window.innerHeight - elemHeight)/2;
-    setTimeout(() => {
-      window.scrollTo(0, top - offset);
-    }, 1);
+    window.scrollTo(0, top - offset);
   }
 
   function scrollLargeElementSoOverHalfCoversPage(elem) {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
-    setTimeout(() => {
-      window.scrollTo(0, top - 20);
-    }, 1);
+    window.scrollTo(0, top - 20);
   }
 
   function scrollIntoPartialViewTop(elem) {
     var top = elem.node.getBoundingClientRect().top + window.pageYOffset;
-    setTimeout(() => {
-      window.scrollTo(0, top - window.innerHeight + 2);
-    }, 1);
+    window.scrollTo(0, top - window.innerHeight + 2);
   }
 
   function scrollIntoPartialViewBottom(elem) {
     var bottom = elem.node.getBoundingClientRect().bottom + window.pageYOffset;
-    setTimeout(() => {
-      window.scrollTo(0, bottom - 2);
-    }, 1);
+    window.scrollTo(0, bottom - 2);
   }
 
   function scrollToTop() {
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 1);
+    window.scrollTo(0, 0);
   }
 
   function scrollToBottom() {
-    setTimeout(() => {
-      window.scrollTo(0,document.body.scrollHeight);
-    }, 1);
+    window.scrollTo(0,document.body.scrollHeight);
   }
 
   function waitFor(condition, callback, timeToWait = 1000, time = 0) {
