@@ -104,12 +104,16 @@ describe("ScrollAnimation - ", function () {
       });
   });
 
-  it("inViewport returns true if element top is above the viewport and element bottom is below the viewport", () => {
+  it("inViewport returns true if element top is above the viewport and element bottom is below the viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 200, size: 4000});
     scrollIntoCompleteView(scrollAnimation);
     const top = scrollAnimation.getElementTop();
     const bottom = top + scrollAnimation.node.clientHeight;
-    expect(scrollAnimation.inViewport(top, bottom)).toBeTruthy();
+    waitFor(() => {return scrollAnimation.inViewport(top, bottom)},
+      () => {
+        expect(scrollAnimation.inViewport(top, bottom)).toBeTruthy();
+        done();
+      });
   });
 
   it("inViewport returns false if element not completely visible", () => {
@@ -123,31 +127,52 @@ describe("ScrollAnimation - ", function () {
     expect(scrollAnimation.inViewport(top, bottom)).toBeFalsy();
   });
 
-  it("getVisibility returns the current visibility of the element", () => {
+  it("getVisibility returns the current visibility of the element when onScreen at top but not inViewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn",offset: 100});
     var visibility = scrollAnimation.getVisibility();
     expect(visibility.inViewport).toBeFalsy();
     expect(visibility.onScreen).toBeFalsy();
 
     scrollIntoPartialViewTop(scrollAnimation);
-    visibility = scrollAnimation.getVisibility();
-    expect(visibility.inViewport).toBeFalsy();
-    expect(visibility.onScreen).toBeTruthy();
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen.toBeTruthy()},
+      () => {
+        visibility = scrollAnimation.getVisibility();
+        expect(visibility.inViewport).toBeFalsy();
+        expect(visibility.onScreen).toBeTruthy();
+        done();
+      });
+  });
 
-    scrollIntoCompleteView(scrollAnimation);
-    visibility = scrollAnimation.getVisibility();
-    expect(visibility.inViewport).toBeTruthy();
-    expect(visibility.onScreen).toBeTruthy();
-
-    scrollIntoPartialViewBottom(scrollAnimation);
-    visibility = scrollAnimation.getVisibility();
-    expect(visibility.inViewport).toBeFalsy();
-    expect(visibility.onScreen).toBeTruthy();
-
-    scrollToBottom();
-    visibility = scrollAnimation.getVisibility();
+  it("getVisibility returns the current visibility of the element when onScreen and inViewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn",offset: 100});
+    var visibility = scrollAnimation.getVisibility();
     expect(visibility.inViewport).toBeFalsy();
     expect(visibility.onScreen).toBeFalsy();
+
+    scrollIntoCompleteView(scrollAnimation);
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen.toBeTruthy()},
+      () => {
+        visibility = scrollAnimation.getVisibility();
+        expect(visibility.inViewport).toBeTruthy();
+        expect(visibility.onScreen).toBeTruthy();
+        done();
+      });
+  });
+
+  it("getVisibility returns the current visibility of the element when onScreen at bottom but not inViewport", (done) => {
+    var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn",offset: 100});
+    var visibility = scrollAnimation.getVisibility();
+    expect(visibility.inViewport).toBeFalsy();
+    expect(visibility.onScreen).toBeFalsy();
+
+    scrollIntoPartialViewBottom(scrollAnimation);
+    waitFor(() => {return scrollAnimation.getVisibility().onScreen.toBeTruthy()},
+      () => {
+        visibility = scrollAnimation.getVisibility();
+        expect(visibility.inViewport).toBeFalsy();
+        expect(visibility.onScreen).toBeTruthy();
+        done();
+      });
   });
 
   it("onScreen returns false if whole of element is off screen", () => {
@@ -157,12 +182,15 @@ describe("ScrollAnimation - ", function () {
     expect(scrollAnimation.onScreen(top, bottom)).toBeFalsy();
   });
 
-  it("onScreen returns true if part of element is on screen", () => {
+  it("onScreen returns true if part of element is on screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     const top = scrollAnimation.getElementTop();
     const bottom = top + scrollAnimation.node.clientHeight;
     scrollIntoCompleteView(scrollAnimation);
-    expect(scrollAnimation.onScreen(top, bottom)).toBeTruthy();
+    waitFor(() => {return scrollAnimation.onScreen(top, bottom)}, () => {
+      expect(scrollAnimation.onScreen(top, bottom)).toBeTruthy();
+      done();
+    });
   });
 
   it("isAboveScreen returns true if bottom of element is above top of screen", () => {
