@@ -118,14 +118,16 @@ export default class ScrollAnimation extends Component {
 
   animateIn(callback) {
     this.animate(this.props.animateIn, () => {
-      this.setState({
-        style: {
-          animationDuration: `${this.props.duration}s`,
-          opacity: 1
-        }
-      });
+      if (!this.props.animateOnce) {
+        this.setState({
+          style: {
+            animationDuration: `${this.props.duration}s`,
+            opacity: 1
+          }
+        });
+        this.animating = false;
+      }
       const vis = this.getVisibility();
-      this.animating = false;
       if (callback) {
         callback(vis);
       }

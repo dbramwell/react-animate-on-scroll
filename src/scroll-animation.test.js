@@ -553,19 +553,21 @@ describe("ScrollAnimation - ", function () {
     }, 199);
   });
 
-  it("only animates once with 'animateOnce' property", (done) => {
+  it("When 'animateOnce' is set, animating is never set back to false after first animation", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", animateOnce: true });
     expect(scrollAnimation.node.style.opacity).toBe('0');
     expect(scrollAnimation.node.className).toNotContain("zoomIn");
+    expect(scrollAnimation.animating).toBeFalsy();
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
       () => {
         expect(scrollAnimation.node.className).toContain("zoomIn");
         expect(scrollAnimation.node.style.opacity).toNotBe('0');
+        expect(scrollAnimation.animating).toBeTruthy();
         scrollToTop();
-        ensureNotSatisfied(() => {return !scrollAnimation.node.classList.contains("zoomIn")},
+        ensureNotSatisfied(() => {return scrollAnimation.animating === false},
           () => {
-            expect(scrollAnimation.node.className).toContain("zoomIn");
+            expect(scrollAnimation.animating).toBeTruthy();
             expect(scrollAnimation.node.style.opacity).toNotBe('0');
             done();
           }
