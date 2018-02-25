@@ -9045,14 +9045,16 @@
 	      var _this2 = this;
 	
 	      this.animate(this.props.animateIn, function () {
-	        _this2.setState({
-	          style: {
-	            animationDuration: _this2.props.duration + "s",
-	            opacity: 1
-	          }
-	        });
+	        if (!_this2.props.animateOnce) {
+	          _this2.setState({
+	            style: {
+	              animationDuration: _this2.props.duration + "s",
+	              opacity: 1
+	            }
+	          });
+	          _this2.animating = false;
+	        }
 	        var vis = _this2.getVisibility();
-	        _this2.animating = false;
 	        if (callback) {
 	          callback(vis);
 	        }
@@ -69223,4 +69225,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.10956738.js.map
+//# sourceMappingURL=main.283710b0.js.map
