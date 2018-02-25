@@ -1,36 +1,36 @@
-import React, { Component } from "react";
-import throttle from "lodash.throttle";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import throttle from 'lodash.throttle';
+import PropTypes from 'prop-types';
 
 export default class ScrollAnimation extends Component {
-
   constructor(props) {
     super(props);
-    this.serverSide = typeof window === "undefined";
+    this.serverSide = typeof window === 'undefined';
     this.listener = throttle(this.handleScroll.bind(this), 50);
     this.visibility = {
       onScreen: false,
-      inViewport: false
+      inViewport: false,
     };
 
     this.state = {
-      classes: "animated",
+      classes: 'animated',
       style: {
         animationDuration: `${this.props.duration}s`,
-        opacity: this.props.initiallyVisible ? 1 : 0
-      }
+        opacity: this.props.initiallyVisible ? 1 : 0,
+        display: this.props.display ? this.props.display : 'block',
+      },
     };
 
-    if(!this.serverSide){
+    if (!this.serverSide) {
       if (window && window.addEventListener) {
-        window.addEventListener("scroll", this.listener);
+        window.addEventListener('scroll', this.listener);
       }
     }
   }
 
   getElementTop() {
-    var yPos = 0;
-    var elm = this.node;
+    let yPos = 0;
+    let elm = this.node;
     while (elm) {
       yPos += (elm.offsetTop + elm.clientTop);
       elm = elm.offsetParent;
@@ -80,12 +80,12 @@ export default class ScrollAnimation extends Component {
     const elementBottom = elementTop + this.node.clientHeight;
     return {
       inViewport: this.inViewport(elementTop, elementBottom),
-      onScreen: this.onScreen(elementTop, elementBottom)
+      onScreen: this.onScreen(elementTop, elementBottom),
     };
   }
 
   componentDidMount() {
-    if(!this.serverSide) {
+    if (!this.serverSide) {
       this.handleScroll();
     }
   }
@@ -94,7 +94,7 @@ export default class ScrollAnimation extends Component {
     clearTimeout(this.delayedAnimationTimeout);
     clearTimeout(this.callbackTimeout);
     if (window && window.removeEventListener) {
-      window.removeEventListener("scroll", this.listener);
+      window.removeEventListener('scroll', this.listener);
     }
   }
 
@@ -109,8 +109,9 @@ export default class ScrollAnimation extends Component {
       this.setState({
         classes: `animated ${animation}`,
         style: {
-          animationDuration: `${this.props.duration}s`
-        }
+          animationDuration: `${this.props.duration}s`,
+          display: this.state.style.display,
+        },
       });
       this.callbackTimeout = setTimeout(callback, this.props.duration * 1000);
     }, this.props.delay);
@@ -121,8 +122,9 @@ export default class ScrollAnimation extends Component {
       this.setState({
         style: {
           animationDuration: `${this.props.duration}s`,
-          opacity: 1
-        }
+          opacity: 1,
+          display: this.state.style.display,
+        },
       });
       const vis = this.getVisibility();
       this.animating = false;
@@ -135,11 +137,12 @@ export default class ScrollAnimation extends Component {
   animateOut(callback) {
     this.animate(this.props.animateOut, () => {
       this.setState({
-        classes: "animated",
+        classes: 'animated',
         style: {
           animationDuration: `${this.props.duration}s`,
-          opacity: 0
-        }
+          opacity: 0,
+          display: this.state.style.display,
+        },
       });
       const vis = this.getVisibility();
       if (vis.inViewport && this.props.animateIn) {
@@ -161,11 +164,12 @@ export default class ScrollAnimation extends Component {
         clearTimeout(this.delayedAnimationTimeout);
         if (!currentVis.onScreen) {
           this.setState({
-            classes: "animated",
+            classes: 'animated',
             style: {
               animationDuration: `${this.props.duration}s`,
-              opacity: this.props.initiallyVisible ? 1 : 0
-            }
+              opacity: this.props.initiallyVisible ? 1 : 0,
+              display: this.state.style.display,
+            },
           });
         } else if (currentVis.inViewport && this.props.animateIn) {
           this.animateIn(this.props.afterAnimatedIn);
@@ -191,7 +195,7 @@ ScrollAnimation.defaultProps = {
   duration: 1,
   initiallyVisible: false,
   delay: 0,
-  animateOnce: false
+  animateOnce: false,
 };
 
 ScrollAnimation.propTypes = {
@@ -201,5 +205,6 @@ ScrollAnimation.propTypes = {
   duration: PropTypes.number,
   delay: PropTypes.number,
   initiallyVisible: PropTypes.bool,
-  animateOnce: PropTypes.bool
+  animateOnce: PropTypes.bool,
+  display: PropTypes.string,
 };
