@@ -110,7 +110,7 @@ export default class ScrollAnimation extends Component {
         classes: `animated ${animation}`,
         style: {
           animationDuration: `${this.props.duration}s`,
-          display: this.props.display,
+          display: this.state.style.display,
         },
       });
       this.callbackTimeout = setTimeout(callback, this.props.duration * 1000);
@@ -123,7 +123,7 @@ export default class ScrollAnimation extends Component {
         style: {
           animationDuration: `${this.props.duration}s`,
           opacity: 1,
-          display: this.props.display ? this.props.display : 'block',
+          display: this.state.style.display,
         },
       });
       const vis = this.getVisibility();
@@ -141,7 +141,7 @@ export default class ScrollAnimation extends Component {
         style: {
           animationDuration: `${this.props.duration}s`,
           opacity: 0,
-          display: this.props.display,
+          display: this.state.style.display,
         },
       });
       const vis = this.getVisibility();
@@ -168,7 +168,7 @@ export default class ScrollAnimation extends Component {
             style: {
               animationDuration: `${this.props.duration}s`,
               opacity: this.props.initiallyVisible ? 1 : 0,
-              display: this.props.display,
+              display: this.state.style.display,
             },
           });
         } else if (currentVis.inViewport && this.props.animateIn) {
