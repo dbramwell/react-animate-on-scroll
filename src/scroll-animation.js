@@ -204,5 +204,5 @@ ScrollAnimation.propTypes = {
   delay: PropTypes.number,
   initiallyVisible: PropTypes.bool,
   animateOnce: PropTypes.bool,
-  style: Proptype.object
+  style: Proptypes.object
 };
