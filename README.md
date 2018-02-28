@@ -64,6 +64,10 @@ How long to delay the animation for (in milliseconds) once it enters or leaves t
 
 Whether the element should only animate once or not.
 
+**style** - default {}
+
+A style object can be assigned to any ScrollAnimation component and will be passed to the rendered dom element. Its probably best to avoid manually setting animationDuration or opacity as the component will modify those attributes.
+
 **afterAnimatedIn**
 
 Callback function to run once the animateIn animation has completed. Receives the visibility of the element at time of execution.
@@ -97,6 +101,10 @@ function(visible) {
 ```
 
 ## Changes:
+### Version 2.0.2
+* ScrollAnimation components now accept style prop.
+### Version 2.0.1
+* animateOnce now works properly.
 #### Version 2.0.0
 * The "visible" object passed to the afterAnimatedIn and afterAnimatedOut callbacks has the properties "onScreen" which is true if the element is on the screen, and "inViewport", which is true if the element is in the viewport. visible.completely and visible.partially will no longer work.
 * Should now work on mobile devices.
