@@ -805,6 +805,11 @@ describe("ScrollAnimation - ", function () {
       });
   });
 
+  it("passes the style prop to the rendered dom element", () => {
+    ReactDOM.render(<ScrollAnimation animateIn="fadeIn" duration={2} style={{color: "red"}}/>, myTestDiv);
+    expect(document.getElementsByTagName("div")[1].style["color"]).toBe("red");
+  });
+
   function createScrollAnimationOffScreen(props) {
     var size = props.size ? props.size : 100;
     ReactDOM.render(<div><div style={{height:10000 + "px"}} /><div id="test"/><div style={{height:10000 + "px"}} /></div>, myTestDiv);
