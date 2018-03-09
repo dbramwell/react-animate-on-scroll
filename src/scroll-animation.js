@@ -20,30 +20,37 @@ export default class ScrollAnimation extends Component {
         opacity: this.props.initiallyVisible ? 1 : 0
       }
     };
-
-    if(!this.serverSide){
-      if (window && window.addEventListener) {
-        window.addEventListener("scroll", this.listener);
-      }
-    }
   }
 
-  getElementTop() {
+  getElementTop(elm) {
     var yPos = 0;
-    var elm = this.node;
-    while (elm) {
+    while (elm && elm.offsetTop !== undefined && elm.clientTop !== undefined) {
       yPos += (elm.offsetTop + elm.clientTop);
       elm = elm.offsetParent;
     }
     return yPos;
   }
 
+  getScrollPos() {
+    if (this.scrollableParent.pageYOffset !== undefined) {
+      return this.scrollableParent.pageYOffset;
+    }
+    return this.scrollableParent.scrollTop;
+  }
+
+  getScrollableParentHeight() {
+    if (this.scrollableParent.innerHeight !== undefined) {
+      return this.scrollableParent.innerHeight;
+    }
+    return this.scrollableParent.clientHeight;
+  }
+
   getViewportTop() {
-    return window.pageYOffset + this.props.offset;
+    return this.getScrollPos() + this.props.offset;
   }
 
   getViewportBottom() {
-    return window.pageYOffset + window.innerHeight - this.props.offset;
+    return this.getScrollPos() + this.getScrollableParentHeight() - this.props.offset;
   }
 
   isInViewport(y) {
@@ -68,15 +75,15 @@ export default class ScrollAnimation extends Component {
   }
 
   isAboveScreen(y) {
-    return y < window.pageYOffset;
+    return y < this.getScrollPos();
   }
 
   isBelowScreen(y) {
-    return y > window.pageYOffset + window.innerHeight;
+    return y > this.getScrollPos() + this.getScrollableParentHeight();
   }
 
   getVisibility() {
-    const elementTop = this.getElementTop();
+    const elementTop = this.getElementTop(this.node) - this.getElementTop(this.scrollableParent);
     const elementBottom = elementTop + this.node.clientHeight;
     return {
       inViewport: this.inViewport(elementTop, elementBottom),
@@ -86,6 +93,13 @@ export default class ScrollAnimation extends Component {
 
   componentDidMount() {
     if(!this.serverSide) {
+      const parentSelector = this.props.scrollableParentSelector
+      this.scrollableParent = parentSelector ? document.querySelector(parentSelector) : window;
+      if (this.scrollableParent && this.scrollableParent.addEventListener) {
+        this.scrollableParent.addEventListener("scroll", this.listener);
+      } else {
+        console.warn(`Cannot find element by locator: ${this.props.scrollableParentSelector}`);
+      }
       this.handleScroll();
     }
   }
@@ -204,5 +218,6 @@ ScrollAnimation.propTypes = {
   delay: PropTypes.number,
   initiallyVisible: PropTypes.bool,
   animateOnce: PropTypes.bool,
-  style: PropTypes.object
+  style: PropTypes.object,
+  scrollableParentSelector: PropTypes.string
 };
