@@ -105,6 +105,8 @@ function(visible) {
 ```
 
 ## Changes:
+### Version 2.1.0
+* Can now use scrollableParentSelector to use ScrollAnimation within any scrolling parent element.
 ### Version 2.0.2
 * ScrollAnimation components now accept style prop.
 ### Version 2.0.1
