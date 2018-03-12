@@ -68,6 +68,10 @@ Whether the element should only animate once or not.
 
 A style object can be assigned to any ScrollAnimation component and will be passed to the rendered dom element. Its probably best to avoid manually setting animationDuration or opacity as the component will modify those attributes.
 
+**scrollableParentSelector**
+
+By default the code checks to see if the element is visible within the window. This can be changed to any other parent element of the ScrollAnimation by adding a css selector pointing to the parent that you wish to use.
+
 **afterAnimatedIn**
 
 Callback function to run once the animateIn animation has completed. Receives the visibility of the element at time of execution.
