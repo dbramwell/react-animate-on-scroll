@@ -13,6 +13,7 @@ class Menu extends Component {
         "duration",
         "delay",
         "animateOnce",
+        "scrollableParentSelector",
         "afterAnimatedIn",
         "afterAnimatedOut"
       ],

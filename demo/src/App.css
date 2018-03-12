@@ -20,6 +20,15 @@ div.page {
   flex-direction: column;
 }
 
+#scrolly-div {
+  height: 50vh;
+  width: 80%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin: auto;
+  border-radius: 5px;
+}
+
 div.page:nth-child(odd) {
   background: #AEB4CE;
 }
@@ -28,7 +37,12 @@ div.page:nth-child(even) {
   background: #DFE7FF;
 }
 
-@media screen and (max-width: 768px) {
+div.page:nth-child(even) .page {
+  background: #AEB4CE;
+}
+
+div.page:nth-child(odd) .page {
+  background: #DFE7FF;
 }
 
 h1 {
@@ -40,6 +54,12 @@ h1 {
 h2 {
   color: #d13404;
   font-size: 4rem;
+  margin: 0px;
+}
+
+h3 {
+  color: #b01202;
+  font-size: 2rem;
   margin: 0px;
 }
 
@@ -60,4 +80,22 @@ pre {
   h2 {
     font-size: 3rem;
   }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }

@@ -29,13 +29,13 @@ describe("ScrollAnimation - ", function () {
 
   it("getElementTop returns location of top of element", function () {
     var root = ReactDOM.render(<ScrollAnimation />, myTestDiv);
-    expect(root.getElementTop()).toBe(8);
+    expect(root.getElementTop()).toBe(0);
   });
 
   it("getElementTop returns location of top of element when element contains an image after image has loaded", function (done) {
     var root = ReactDOM.render(<ScrollAnimation><img style={{verticalAlign: "middle"}} src="base/test.jpg"/></ScrollAnimation>, myTestDiv);
     setTimeout(() => {
-      expect(root.getElementTop()).toBe(8);
+      expect(root.getElementTop()).toBe(0);
       done();
     }, 100);
   });  
@@ -95,9 +95,9 @@ describe("ScrollAnimation - ", function () {
   it("inViewport returns true if element is contained in the viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 100});
     scrollIntoCompleteView(scrollAnimation);
-    waitFor(() => {return scrollAnimation.inViewport(scrollAnimation.getElementTop(), scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)},
+    waitFor(() => {return scrollAnimation.inViewport(scrollAnimation.getElementTop(scrollAnimation.node), scrollAnimation.getElementTop(scrollAnimation.node) + scrollAnimation.node.clientHeight)},
       () => {
-        expect(scrollAnimation.inViewport(scrollAnimation.getElementTop(), scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
+        expect(scrollAnimation.inViewport(scrollAnimation.getElementTop(scrollAnimation.node), scrollAnimation.getElementTop(scrollAnimation.node) + scrollAnimation.node.clientHeight)).toBeTruthy();
         done();
       });
   });
@@ -105,7 +105,7 @@ describe("ScrollAnimation - ", function () {
   it("inViewport returns true if element top is above the viewport and element bottom is below the viewport", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 200, size: 4000});
     scrollIntoCompleteView(scrollAnimation);
-    const top = scrollAnimation.getElementTop();
+    const top = scrollAnimation.getElementTop(scrollAnimation.node);
     const bottom = top + scrollAnimation.node.clientHeight;
     waitFor(() => {return scrollAnimation.inViewport(top, bottom)},
       () => {
@@ -116,7 +116,7 @@ describe("ScrollAnimation - ", function () {
 
   it("inViewport returns false if element not completely visible", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn", offset: 200});
-    const top = scrollAnimation.getElementTop();
+    const top = scrollAnimation.getElementTop(scrollAnimation.node);
     const bottom = top + scrollAnimation.node.clientHeight;
     expect(scrollAnimation.inViewport(top, bottom)).toBeFalsy();
     scrollIntoPartialViewTop(scrollAnimation);
@@ -175,14 +175,14 @@ describe("ScrollAnimation - ", function () {
 
   it("onScreen returns false if whole of element is off screen", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    const top = scrollAnimation.getElementTop();
+    const top = scrollAnimation.getElementTop(scrollAnimation.node);
     const bottom = top + scrollAnimation.node.clientHeight;
     expect(scrollAnimation.onScreen(top, bottom)).toBeFalsy();
   });
 
   it("onScreen returns true if part of element is on screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    const top = scrollAnimation.getElementTop();
+    const top = scrollAnimation.getElementTop(scrollAnimation.node);
     const bottom = top + scrollAnimation.node.clientHeight;
     scrollIntoCompleteView(scrollAnimation);
     waitFor(() => {return scrollAnimation.onScreen(top, bottom)}, () => {
@@ -194,8 +194,8 @@ describe("ScrollAnimation - ", function () {
   it("isAboveScreen returns true if bottom of element is above top of screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollToBottom();
-    waitFor(() => {return scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)}, () => {
-      expect(scrollAnimation.isAboveScreen(scrollAnimation.getElementTop() + scrollAnimation.node.clientHeight)).toBeTruthy();
+    waitFor(() => {return scrollAnimation.isAboveScreen(scrollAnimation.getElementTop(scrollAnimation.node) + scrollAnimation.node.clientHeight)}, () => {
+      expect(scrollAnimation.isAboveScreen(scrollAnimation.getElementTop(scrollAnimation.node) + scrollAnimation.node.clientHeight)).toBeTruthy();
       done();
     });
   });
@@ -207,14 +207,14 @@ describe("ScrollAnimation - ", function () {
 
   it("isBelowScreen returns true if top of element is below bottom of screen", () => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
-    expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeTruthy();
+    expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop(scrollAnimation.node))).toBeTruthy();
   });
 
   it("isBelowScreen returns false if top of element is above bottom of screen", (done) => {
     var scrollAnimation = createScrollAnimationOffScreen({animateIn: "zoomIn"});
     scrollToBottom();
-    waitFor(() => {return !scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())}, () => {
-      expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop())).toBeFalsy();
+    waitFor(() => {return !scrollAnimation.isBelowScreen(scrollAnimation.getElementTop(scrollAnimation.node))}, () => {
+      expect(scrollAnimation.isBelowScreen(scrollAnimation.getElementTop(scrollAnimation.node))).toBeFalsy();
       done();
     });
   });
@@ -808,6 +808,47 @@ describe("ScrollAnimation - ", function () {
   it("passes the style prop to the rendered dom element", () => {
     ReactDOM.render(<ScrollAnimation animateIn="fadeIn" duration={2} style={{color: "red"}}/>, myTestDiv);
     expect(document.getElementsByTagName("div")[1].style["color"]).toBe("red");
+  });
+
+  it("Scrollable element is onscreen but ScrollAnimation is not in view in scrollable element, animation should not be triggered", () => {
+    ReactDOM.render(<div id="scrolly-div" style={{height:500 + "px", overflow:"scroll"}} >
+      <div style={{height:600 + "px"}} />
+      <div id="animation-div" />
+      <div style={{height:600 + "px"}} />
+    </div>, myTestDiv);
+    var scrollAnimation = ReactDOM.render(<ScrollAnimation scrollableParentSelector="#scrolly-div" animateIn="fadeIn"/>, document.getElementById("animation-div"));
+    expect(scrollAnimation.node.className).toNotContain("fadeIn");
+  });
+
+  it("Scrollable element is on screen and ScrollAnimation is in view in scrollable element, animation should be triggered", (done) => {
+    ReactDOM.render(<div id="scrolly-div" style={{height:500 + "px", overflow:"scroll"}} >
+      <div style={{height:600 + "px"}} />
+      <div id="animation-div" />
+      <div style={{height:600 + "px"}} />
+    </div>, myTestDiv);
+    var scrollyDiv = document.getElementById("scrolly-div");
+    var scrollAnimation = ReactDOM.render(<ScrollAnimation scrollableParentSelector="#scrolly-div" animateIn="fadeIn"/>, document.getElementById("animation-div"));
+    scrollyDiv.scrollTop = 400;
+    waitFor(() => {return scrollAnimation.animating}, () => {
+      expect(scrollAnimation.node.className).toContain("fadeIn");
+      done();
+    });
+  });
+
+  it("When not passed scrollableParentSelector the scrollableParent is the window object", () => {
+    var scrollAnimation = ReactDOM.render(<ScrollAnimation />, myTestDiv);
+    expect(scrollAnimation.scrollableParent).toBe(window);
+  });
+
+  it("When passed scrollableParentSelector the scrollableParent is object found by the selector", () => {
+    ReactDOM.render(<div id="scrolly-div" style={{height:500 + "px"}} >
+      <div style={{height:600 + "px"}} />
+      <div id="animation-div" />
+      <div style={{height:600 + "px"}} />
+    </div>, myTestDiv);
+    var scrollyDiv = document.getElementById("scrolly-div");
+    var scrollAnimation = ReactDOM.render(<ScrollAnimation scrollableParentSelector="#scrolly-div" animateIn="fadeIn"/>, document.getElementById("animation-div"));
+    expect(scrollAnimation.scrollableParent).toBe(scrollyDiv);
   });
 
   function createScrollAnimationOffScreen(props) {

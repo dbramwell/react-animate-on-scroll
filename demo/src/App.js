@@ -43,6 +43,19 @@ class App extends Component {
         <ScrollableAnchor id={'animateOnce'}>
           <PropDescPage property="animateOnce" animateOnce={true} animateIn="bounce" initiallyVisible={true} />
         </ScrollableAnchor>
+        <ScrollableAnchor id={'scrollableParentSelector'}>
+        <div className={"page"}>
+          <h1>scrollableParentSelector</h1>
+          <div id="scrolly-div" >
+            <PropDescPage property="scrollableParentSelector" animateIn="fadeIn" animateOut="fadeOut" scrollableParentSelector="#scrolly-div">
+              <div style={{height:100 + "vh"}}>
+                <h2>You can use scroll animations within other elements too, just pass a CSS selector that corresponds to the scrollable parent object.</h2>
+                <h3>Scroll here to see how it works!</h3>
+              </div>
+            </PropDescPage>
+          </div>
+        </div>
+        </ScrollableAnchor>
         <ScrollableAnchor id={'afterAnimatedIn'}>
           <PropDescPage property="afterAnimatedIn" animateIn="flipInX" afterAnimatedIn={(v) => {
               var t = "Animate In finished.\n";
