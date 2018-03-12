@@ -21,11 +21,10 @@ div.page {
 }
 
 #scrolly-div {
-  height: 50vh;
+  height: 400px;
   width: 80%;
   overflow-y: scroll;
   overflow-x: hidden;
-  margin: auto;
   margin-top: 20px;
   border-radius: 5px;
 }
@@ -75,11 +74,11 @@ pre {
   }
 
   h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
   }
 
   h2 {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   h3 {
