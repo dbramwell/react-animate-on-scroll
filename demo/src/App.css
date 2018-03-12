@@ -74,11 +74,11 @@ pre {
   }
 
   h1 {
-    font-size: 4.5rem;
+    font-size: 3.5rem;
   }
 
   h2 {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   h3 {
@@ -98,4 +98,8 @@ pre {
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
+#scrolly-div h1 {
+  font-size: 2.5rem;
 }
