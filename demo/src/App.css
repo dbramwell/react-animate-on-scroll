@@ -85,6 +85,10 @@ pre {
   h3 {
     font-size: 1.5rem;
   }
+
+  #scrolly-div h1 {
+    font-size: 2.5rem;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -99,8 +103,4 @@ pre {
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-}
-
-#scrolley-div h1 {
-  font-size: 2.5rem;
 }
