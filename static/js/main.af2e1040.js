@@ -8928,34 +8928,43 @@
 	        opacity: this.props.initiallyVisible ? 1 : 0
 	      }
 	    };
-	
-	    if (!this.serverSide) {
-	      if (window && window.addEventListener) {
-	        window.addEventListener("scroll", this.listener);
-	      }
-	    }
 	  }
 	
 	  _createClass(ScrollAnimation, [{
 	    key: "getElementTop",
-	    value: function getElementTop() {
+	    value: function getElementTop(elm) {
 	      var yPos = 0;
-	      var elm = this.node;
-	      while (elm) {
+	      while (elm && elm.offsetTop !== undefined && elm.clientTop !== undefined) {
 	        yPos += elm.offsetTop + elm.clientTop;
 	        elm = elm.offsetParent;
 	      }
 	      return yPos;
 	    }
 	  }, {
+	    key: "getScrollPos",
+	    value: function getScrollPos() {
+	      if (this.scrollableParent.pageYOffset !== undefined) {
+	        return this.scrollableParent.pageYOffset;
+	      }
+	      return this.scrollableParent.scrollTop;
+	    }
+	  }, {
+	    key: "getScrollableParentHeight",
+	    value: function getScrollableParentHeight() {
+	      if (this.scrollableParent.innerHeight !== undefined) {
+	        return this.scrollableParent.innerHeight;
+	      }
+	      return this.scrollableParent.clientHeight;
+	    }
+	  }, {
 	    key: "getViewportTop",
 	    value: function getViewportTop() {
-	      return window.pageYOffset + this.props.offset;
+	      return this.getScrollPos() + this.props.offset;
 	    }
 	  }, {
 	    key: "getViewportBottom",
 	    value: function getViewportBottom() {
-	      return window.pageYOffset + window.innerHeight - this.props.offset;
+	      return this.getScrollPos() + this.getScrollableParentHeight() - this.props.offset;
 	    }
 	  }, {
 	    key: "isInViewport",
@@ -8985,17 +8994,17 @@
 	  }, {
 	    key: "isAboveScreen",
 	    value: function isAboveScreen(y) {
-	      return y < window.pageYOffset;
+	      return y < this.getScrollPos();
 	    }
 	  }, {
 	    key: "isBelowScreen",
 	    value: function isBelowScreen(y) {
-	      return y > window.pageYOffset + window.innerHeight;
+	      return y > this.getScrollPos() + this.getScrollableParentHeight();
 	    }
 	  }, {
 	    key: "getVisibility",
 	    value: function getVisibility() {
-	      var elementTop = this.getElementTop();
+	      var elementTop = this.getElementTop(this.node) - this.getElementTop(this.scrollableParent);
 	      var elementBottom = elementTop + this.node.clientHeight;
 	      return {
 	        inViewport: this.inViewport(elementTop, elementBottom),
@@ -9006,6 +9015,13 @@
 	    key: "componentDidMount",
 	    value: function componentDidMount() {
 	      if (!this.serverSide) {
+	        var parentSelector = this.props.scrollableParentSelector;
+	        this.scrollableParent = parentSelector ? document.querySelector(parentSelector) : window;
+	        if (this.scrollableParent && this.scrollableParent.addEventListener) {
+	          this.scrollableParent.addEventListener("scroll", this.listener);
+	        } else {
+	          console.warn("Cannot find element by locator: " + this.props.scrollableParentSelector);
+	        }
 	        this.handleScroll();
 	      }
 	    }
@@ -9118,7 +9134,7 @@
 	        "div",
 	        { ref: function (node) {
 	            _this4.node = node;
-	          }, className: this.state.classes, style: this.state.style },
+	          }, className: this.state.classes, style: Object.assign(this.state.style, this.props.style) },
 	        this.props.children
 	      );
 	    }
@@ -9144,7 +9160,9 @@
 	  duration: _propTypes2["default"].number,
 	  delay: _propTypes2["default"].number,
 	  initiallyVisible: _propTypes2["default"].bool,
-	  animateOnce: _propTypes2["default"].bool
+	  animateOnce: _propTypes2["default"].bool,
+	  style: _propTypes2["default"].object,
+	  scrollableParentSelector: _propTypes2["default"].string
 	};
 	module.exports = exports["default"];
 
@@ -29223,6 +29241,41 @@
 	        ),
 	        _react2.default.createElement(
 	          _reactScrollableAnchor2.default,
+	          { id: 'scrollableParentSelector' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: "page" },
+	            _react2.default.createElement(
+	              'h1',
+	              null,
+	              'scrollableParentSelector'
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { id: 'scrolly-div' },
+	              _react2.default.createElement(
+	                _PropDescPage2.default,
+	                { property: 'scrollableParentSelector', animateIn: 'fadeIn', animateOut: 'fadeOut', scrollableParentSelector: '#scrolly-div' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { style: { height: 100 + "vh" } },
+	                  _react2.default.createElement(
+	                    'h2',
+	                    null,
+	                    'You can use scroll animations within other elements too, just pass a CSS selector that corresponds to the scrollable parent object.'
+	                  ),
+	                  _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    'Scroll here to see how it works!'
+	                  )
+	                )
+	              )
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          _reactScrollableAnchor2.default,
 	          { id: 'afterAnimatedIn' },
 	          _react2.default.createElement(_PropDescPage2.default, { property: 'afterAnimatedIn', animateIn: 'flipInX', afterAnimatedIn: function afterAnimatedIn(v) {
 	              var t = "Animate In finished.\n";
@@ -29425,7 +29478,7 @@
 	    var _this = _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
 	
 	    _this.state = {
-	      properties: ["animateIn", "animateOut", "initiallyVisible", "duration", "delay", "animateOnce", "afterAnimatedIn", "afterAnimatedOut"],
+	      properties: ["animateIn", "animateOut", "initiallyVisible", "duration", "delay", "animateOnce", "scrollableParentSelector", "afterAnimatedIn", "afterAnimatedOut"],
 	      hash: ''
 	    };
 	    return _this;
@@ -29669,7 +29722,7 @@
 	    value: function getScrollAnimation() {
 	      return _react2.default.createElement(
 	        _reactAnimateOnScroll2.default,
-	        { delay: this.props.delay, duration: this.props.duration, animateIn: this.props.animateIn, animateOut: this.props.animateOut, initiallyVisible: this.props.initiallyVisible, animateOnce: this.props.animateOnce, afterAnimatedIn: this.props.afterAnimatedIn, afterAnimatedOut: this.props.afterAnimatedOut },
+	        { delay: this.props.delay, duration: this.props.duration, animateIn: this.props.animateIn, animateOut: this.props.animateOut, initiallyVisible: this.props.initiallyVisible, animateOnce: this.props.animateOnce, afterAnimatedIn: this.props.afterAnimatedIn, afterAnimatedOut: this.props.afterAnimatedOut, scrollableParentSelector: this.props.scrollableParentSelector },
 	        _react2.default.createElement(
 	          'h1',
 	          null,
@@ -69225,4 +69278,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.283710b0.js.map
+//# sourceMappingURL=main.af2e1040.js.map
