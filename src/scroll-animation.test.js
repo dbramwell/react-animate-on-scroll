@@ -810,6 +810,11 @@ describe("ScrollAnimation - ", function () {
     expect(document.getElementsByTagName("div")[1].style["color"]).toBe("red");
   });
 
+  it("joins the className prop with the other classes in the rendered dom element", () => {
+    ReactDOM.render(<ScrollAnimation animateIn="fadeIn" duration={2} className={"another-class and-another"}/>, myTestDiv);
+    expect(document.getElementsByTagName("div")[1].className).toContain("another-class and-another");
+  });
+
   it("Scrollable element is onscreen but ScrollAnimation is not in view in scrollable element, animation should not be triggered", () => {
     ReactDOM.render(<div id="scrolly-div" style={{height:500 + "px", overflow:"scroll"}} >
       <div style={{height:600 + "px"}} />

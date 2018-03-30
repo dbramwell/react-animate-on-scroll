@@ -194,8 +194,9 @@ export default class ScrollAnimation extends Component {
   }
 
   render() {
+    var classes = this.props.className ? `${this.props.className} ${this.state.classes}` : this.state.classes;
     return (
-      <div ref={(node) => { this.node = node; }} className={this.state.classes} style={Object.assign({}, this.state.style, this.props.style)}>
+      <div ref={(node) => { this.node = node; }} className={classes} style={Object.assign({}, this.state.style, this.props.style)}>
         {this.props.children}
       </div>
     );
@@ -219,5 +220,6 @@ ScrollAnimation.propTypes = {
   initiallyVisible: PropTypes.bool,
   animateOnce: PropTypes.bool,
   style: PropTypes.object,
-  scrollableParentSelector: PropTypes.string
+  scrollableParentSelector: PropTypes.string,
+  className: PropTypes.string
 };
