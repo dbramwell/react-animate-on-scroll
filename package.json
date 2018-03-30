@@ -28,7 +28,7 @@
   "homepage": "http://dbramwell.github.io/react-animate-on-scroll",
   "peerDependencies": {
     "classnames": "^2.2.5",
-    "react": "^15.4.1"
+    "react": ">= 15.4.1 < 17.0.0-0"
   },
   "devDependencies": {
     "animate.css": "^3.5.2",
