@@ -18,9 +18,10 @@ div.page {
   justify-content: center;
   align-content: space-around;
   flex-direction: column;
+  padding-bottom: 20px;
 }
 
-#scrolly-div {
+.scrolly-div {
   height: 400px;
   width: 80%;
   overflow-y: scroll;
@@ -66,6 +67,12 @@ h3 {
 pre {
   font-size: 1.5rem;
   width: 90%;
+}
+
+#scrolly-div-animatePreScroll .page {
+  height: 150vh;
+  justify-content: unset;
+  padding-top: 50px;
 }
 
 @media screen and (max-width: 768px) {
