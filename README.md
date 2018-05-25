@@ -104,6 +104,10 @@ function(visible) {
 }
 ```
 
+**animatePreScroll** - default true
+
+By default if a ScrollAnimation is in view as soon as a page loads, then the animation will begin. If you don't want the animation to being until the user scrolls, then set this to false.
+
 ## Changes:
 ### Version 2.1.0
 * Can now use scrollableParentSelector to use ScrollAnimation within any scrolling parent element.

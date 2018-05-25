@@ -4,10 +4,13 @@ import Menu from './menu/Menu';
 import Home from './home/Home';
 import PropDescPage from './propDescriptionPage/PropDescPage';
 import ScrollableAnchor from 'react-scrollable-anchor';
+import { configureAnchors } from 'react-scrollable-anchor';
 import Overview from './overview/Overview';
 import ScrollAnimation from 'react-animate-on-scroll';
 import "../node_modules/animate.css/animate.min.css";
 import "prismjs/components/prism-jsx.min";
+
+configureAnchors({offset: -100})
 
 class App extends Component {
   render() {
@@ -46,7 +49,7 @@ class App extends Component {
         <ScrollableAnchor id={'scrollableParentSelector'}>
         <div className={"page"}>
           <h1>scrollableParentSelector</h1>
-          <div id="scrolly-div" >
+          <div id="scrolly-div" className='scrolly-div'>
             <PropDescPage property="scrollableParentSelector" animateIn="fadeIn" animateOut="fadeOut" scrollableParentSelector="#scrolly-div">
               <div style={{height:100 + "vh"}}>
                 <h2>You can use scroll animations within other elements too, just pass a CSS selector that corresponds to the scrollable parent object.</h2>
@@ -71,6 +74,20 @@ class App extends Component {
               t += `v.inViewport: ${v.inViewport}`;
               alert(t);
             }} />
+        </ScrollableAnchor>
+        <ScrollableAnchor id={'animatePreScroll'}>
+        <div className={"page"}>
+          <h1>animatePreScroll</h1>
+          <h3>You might not want an animation to run if it is in view as soon as the page loads. Scroll below to see what I mean.</h3>
+          <div id='scrolly-div-animatePreScroll' className='scrolly-div' >
+            <PropDescPage property="animatePreScroll=false" offset={0} animateIn="fadeIn" animatePreScroll={false} scrollableParentSelector="#scrolly-div-animatePreScroll">
+              <ScrollAnimation offset={0} animateIn="fadeIn" scrollableParentSelector="#scrolly-div-animatePreScroll">
+                <h1>animatePreScroll=true</h1>
+              </ScrollAnimation>
+              <div style={{height:20 + "px"}}/>
+            </PropDescPage>
+          </div>
+        </div>
         </ScrollableAnchor>
         <ScrollableAnchor id={'install'}>
           <Overview />

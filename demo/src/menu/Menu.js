@@ -15,7 +15,8 @@ class Menu extends Component {
         "animateOnce",
         "scrollableParentSelector",
         "afterAnimatedIn",
-        "afterAnimatedOut"
+        "afterAnimatedOut",
+        "animatePreScroll"
       ],
       hash: ''
     }

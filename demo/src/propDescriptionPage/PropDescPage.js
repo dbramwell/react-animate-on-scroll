@@ -11,7 +11,17 @@ class PropDescPage extends Component {
   }
 
   getScrollAnimation() {
-    return (<ScrollAnimation delay={this.props.delay} duration={this.props.duration} animateIn={this.props.animateIn} animateOut={this.props.animateOut} initiallyVisible={this.props.initiallyVisible} animateOnce={this.props.animateOnce} afterAnimatedIn={this.props.afterAnimatedIn} afterAnimatedOut={this.props.afterAnimatedOut} scrollableParentSelector={this.props.scrollableParentSelector}>
+    return (<ScrollAnimation
+      delay={this.props.delay}
+      duration={this.props.duration}
+      animateIn={this.props.animateIn}
+      animateOut={this.props.animateOut}
+      initiallyVisible={this.props.initiallyVisible}
+      animateOnce={this.props.animateOnce}
+      afterAnimatedIn={this.props.afterAnimatedIn}
+      afterAnimatedOut={this.props.afterAnimatedOut}
+      scrollableParentSelector={this.props.scrollableParentSelector}
+      animatePreScroll={this.props.animatePreScroll}>
         <h1>{this.props.property}</h1>
       </ScrollAnimation>)
   }
