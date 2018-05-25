@@ -24,9 +24,10 @@ div.page {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  padding-bottom: 20px;
 }
 
-#scrolly-div {
+.scrolly-div {
   height: 400px;
   width: 80%;
   overflow-y: scroll;
@@ -72,6 +73,14 @@ h3 {
 pre {
   font-size: 1.5rem;
   width: 90%;
+}
+
+#scrolly-div-animatePreScroll .page {
+  height: 150vh;
+  -webkit-box-pack: unset;
+      -ms-flex-pack: unset;
+          justify-content: unset;
+  padding-top: 50px;
 }
 
 @media screen and (max-width: 768px) {
@@ -129,4 +138,4 @@ body {
   padding: 0;
 }
 
-/*# sourceMappingURL=main.d1202857.css.map*/
+/*# sourceMappingURL=main.754a1849.css.map*/

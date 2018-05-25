@@ -9022,7 +9022,9 @@
 	        } else {
 	          console.warn("Cannot find element by locator: " + this.props.scrollableParentSelector);
 	        }
-	        this.handleScroll();
+	        if (this.props.animatePreScroll) {
+	          this.handleScroll();
+	        }
 	      }
 	    }
 	  }, {
@@ -9130,11 +9132,12 @@
 	    value: function render() {
 	      var _this4 = this;
 	
+	      var classes = this.props.className ? this.props.className + " " + this.state.classes : this.state.classes;
 	      return _react2["default"].createElement(
 	        "div",
 	        { ref: function (node) {
 	            _this4.node = node;
-	          }, className: this.state.classes, style: Object.assign(this.state.style, this.props.style) },
+	          }, className: classes, style: Object.assign({}, this.state.style, this.props.style) },
 	        this.props.children
 	      );
 	    }
@@ -9150,7 +9153,8 @@
 	  duration: 1,
 	  initiallyVisible: false,
 	  delay: 0,
-	  animateOnce: false
+	  animateOnce: false,
+	  animatePreScroll: true
 	};
 	
 	ScrollAnimation.propTypes = {
@@ -9162,7 +9166,9 @@
 	  initiallyVisible: _propTypes2["default"].bool,
 	  animateOnce: _propTypes2["default"].bool,
 	  style: _propTypes2["default"].object,
-	  scrollableParentSelector: _propTypes2["default"].string
+	  scrollableParentSelector: _propTypes2["default"].string,
+	  className: _propTypes2["default"].string,
+	  animatePreScroll: _propTypes2["default"].bool
 	};
 	module.exports = exports["default"];
 
@@ -29170,6 +29176,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	(0, _reactScrollableAnchor.configureAnchors)({ offset: -100 });
+	
 	var App = function (_Component) {
 	  _inherits(App, _Component);
 	
@@ -29252,7 +29260,7 @@
 	            ),
 	            _react2.default.createElement(
 	              'div',
-	              { id: 'scrolly-div' },
+	              { id: 'scrolly-div', className: 'scrolly-div' },
 	              _react2.default.createElement(
 	                _PropDescPage2.default,
 	                { property: 'scrollableParentSelector', animateIn: 'fadeIn', animateOut: 'fadeOut', scrollableParentSelector: '#scrolly-div' },
@@ -29293,6 +29301,42 @@
 	              t += 'v.inViewport: ' + v.inViewport;
 	              alert(t);
 	            } })
+	        ),
+	        _react2.default.createElement(
+	          _reactScrollableAnchor2.default,
+	          { id: 'animatePreScroll' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: "page" },
+	            _react2.default.createElement(
+	              'h1',
+	              null,
+	              'animatePreScroll'
+	            ),
+	            _react2.default.createElement(
+	              'h3',
+	              null,
+	              'You might not want an animation to run if it is in view as soon as the page loads. Scroll below to see what I mean.'
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { id: 'scrolly-div-animatePreScroll', className: 'scrolly-div' },
+	              _react2.default.createElement(
+	                _PropDescPage2.default,
+	                { property: 'animatePreScroll=false', offset: 0, animateIn: 'fadeIn', animatePreScroll: false, scrollableParentSelector: '#scrolly-div-animatePreScroll' },
+	                _react2.default.createElement(
+	                  _reactAnimateOnScroll2.default,
+	                  { offset: 0, animateIn: 'fadeIn', scrollableParentSelector: '#scrolly-div-animatePreScroll' },
+	                  _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    'animatePreScroll=true'
+	                  )
+	                ),
+	                _react2.default.createElement('div', { style: { height: 20 + "px" } })
+	              )
+	            )
+	          )
 	        ),
 	        _react2.default.createElement(
 	          _reactScrollableAnchor2.default,
@@ -29478,7 +29522,7 @@
 	    var _this = _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
 	
 	    _this.state = {
-	      properties: ["animateIn", "animateOut", "initiallyVisible", "duration", "delay", "animateOnce", "scrollableParentSelector", "afterAnimatedIn", "afterAnimatedOut"],
+	      properties: ["animateIn", "animateOut", "initiallyVisible", "duration", "delay", "animateOnce", "scrollableParentSelector", "afterAnimatedIn", "afterAnimatedOut", "animatePreScroll"],
 	      hash: ''
 	    };
 	    return _this;
@@ -29722,7 +29766,17 @@
 	    value: function getScrollAnimation() {
 	      return _react2.default.createElement(
 	        _reactAnimateOnScroll2.default,
-	        { delay: this.props.delay, duration: this.props.duration, animateIn: this.props.animateIn, animateOut: this.props.animateOut, initiallyVisible: this.props.initiallyVisible, animateOnce: this.props.animateOnce, afterAnimatedIn: this.props.afterAnimatedIn, afterAnimatedOut: this.props.afterAnimatedOut, scrollableParentSelector: this.props.scrollableParentSelector },
+	        {
+	          delay: this.props.delay,
+	          duration: this.props.duration,
+	          animateIn: this.props.animateIn,
+	          animateOut: this.props.animateOut,
+	          initiallyVisible: this.props.initiallyVisible,
+	          animateOnce: this.props.animateOnce,
+	          afterAnimatedIn: this.props.afterAnimatedIn,
+	          afterAnimatedOut: this.props.afterAnimatedOut,
+	          scrollableParentSelector: this.props.scrollableParentSelector,
+	          animatePreScroll: this.props.animatePreScroll },
 	        _react2.default.createElement(
 	          'h1',
 	          null,
@@ -69278,4 +69332,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.8750941d.js.map
+//# sourceMappingURL=main.d3e1c7a0.js.map
