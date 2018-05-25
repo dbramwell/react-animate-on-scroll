@@ -100,7 +100,9 @@ export default class ScrollAnimation extends Component {
       } else {
         console.warn(`Cannot find element by locator: ${this.props.scrollableParentSelector}`);
       }
-      this.handleScroll();
+      if (this.props.animatePreScroll) {
+        this.handleScroll();
+      }
     }
   }
 
@@ -208,7 +210,8 @@ ScrollAnimation.defaultProps = {
   duration: 1,
   initiallyVisible: false,
   delay: 0,
-  animateOnce: false
+  animateOnce: false,
+  animatePreScroll: true
 };
 
 ScrollAnimation.propTypes = {
@@ -221,5 +224,6 @@ ScrollAnimation.propTypes = {
   animateOnce: PropTypes.bool,
   style: PropTypes.object,
   scrollableParentSelector: PropTypes.string,
-  className: PropTypes.string
+  className: PropTypes.string,
+  animatePreScroll: PropTypes.bool
 };

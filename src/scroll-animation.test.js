@@ -856,6 +856,24 @@ describe("ScrollAnimation - ", function () {
     expect(scrollAnimation.scrollableParent).toBe(scrollyDiv);
   });
 
+  it("When ScrollAnimation is loaded in viewport, animation is triggered straight away", (done) => {
+    var scrollAnimation = ReactDOM.render(<ScrollAnimation animateIn='zoomIn' offset={0} />, myTestDiv);
+    waitFor(() => {return scrollAnimation.node.classList.contains("zoomIn")},
+      () => {
+        expect(scrollAnimation.node.className).toContain("zoomIn");
+        done();
+      });
+  });
+
+  it("When ScrollAnimation is loaded in viewport, animation is not triggered straight away if animatePreScroll is set to false", (done) => {
+    var scrollAnimation = ReactDOM.render(<ScrollAnimation animatePreScroll={false} animateIn='zoomIn' offset={0} />, myTestDiv);
+    ensureNotSatisfied(() => {return scrollAnimation.node.classList.contains("zoomIn")},
+      () => {
+        expect(scrollAnimation.node.className).toNotContain("zoomIn");
+        done();
+      });
+  });
+
   function createScrollAnimationOffScreen(props) {
     var size = props.size ? props.size : 100;
     ReactDOM.render(<div><div style={{height:10000 + "px"}} /><div id="test"/><div style={{height:10000 + "px"}} /></div>, myTestDiv);
