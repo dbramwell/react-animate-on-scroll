@@ -122,12 +122,23 @@ export default class ScrollAnimation extends Component {
   animate(animation, callback) {
     this.delayedAnimationTimeout = setTimeout(() => {
       this.animating = true;
-      this.setState({
-        classes: `animated ${animation}`,
-        style: {
-          animationDuration: `${this.props.duration}s`
-        }
-      });
+      if (window.requestAnimationFrame) {
+        window.requestAnimationFrame(() => {
+          this.setState({
+            classes: `animated ${animation}`,
+            style: {
+              animationDuration: `${this.props.duration}s`
+            }
+          });
+        });
+      } else {
+        this.setState({
+          classes: `animated ${animation}`,
+          style: {
+            animationDuration: `${this.props.duration}s`
+          }
+        });
+      }
       this.callbackTimeout = setTimeout(callback, this.props.duration * 1000);
     }, this.props.delay);
   }
