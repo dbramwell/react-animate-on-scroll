@@ -18,7 +18,7 @@ npm install --save animate.css
 ```
 and then importing in your project:
 ```
-import "animate.css/animate.min.css";
+import "animate.css/animate.compat.css"
 ```
 Or by simply including a link to the file hosted by CDNJS:
 ```
