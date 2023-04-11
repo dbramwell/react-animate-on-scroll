@@ -109,6 +109,7 @@ export default class ScrollAnimation extends Component {
   componentWillUnmount() {
     clearTimeout(this.delayedAnimationTimeout);
     clearTimeout(this.callbackTimeout);
+    this.listener.cancel();
     if (window && window.removeEventListener) {
       window.removeEventListener("scroll", this.listener);
     }
