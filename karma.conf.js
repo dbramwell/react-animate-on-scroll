@@ -2,7 +2,7 @@ var webpack = require('webpack');
 
 module.exports = function (config) {
   var configuration = {
-    browsers: ['ChromeNoSandboxHeadless', 'IE'],
+    browsers: ['ChromeNoSandboxHeadless'],
 
     customLaunchers: {
       ChromeNoSandboxHeadless: {
@@ -47,8 +47,5 @@ module.exports = function (config) {
     }
   };
 
-  if(process.env.TRAVIS){
-    configuration.browsers = ['ChromeNoSandboxHeadless'];
-  }
   config.set(configuration);
 };

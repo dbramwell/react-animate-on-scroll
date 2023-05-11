@@ -1,0 +1,21 @@
+version: '3.4'
+services:
+  demo:
+    build:
+      context: .
+    command: npm start
+    working_dir: /app/demo
+    volumes:
+      - ".:/app"
+      - /app/node_modules/
+      - /app/demo/node_modules/
+    ports:
+      - 3000:3000
+  build:
+    build:
+      context: .
+    command: npm run watch
+    volumes:
+      - ".:/app"
+      - /app/node_modules/
+      - /app/demo/node_modules/
