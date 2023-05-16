@@ -6,3 +6,7 @@ karma.conf.js
 tests.webpack.js
 .gitignore
 .npmignore
+.github
+Dockerfile
+docker-compose.yml
+test.jpg
