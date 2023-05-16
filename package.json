@@ -4,6 +4,8 @@
   "description": "React component to animate elements on scroll with animate.css",
   "main": "dist/scrollAnimation.min.js",
   "scripts": {
+    "build": "gulp build",
+    "watch": "gulp",
     "test": "karma start"
   },
   "repository": {
@@ -40,13 +42,14 @@
     "classnames": "^2.2.5",
     "css-loader": "^0.28.1",
     "expect": "^1.20.2",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-babel": "^5.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-uglifyjs": "^0.6.2",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.1.1",
     "karma-ie-launcher": "^1.0.0",
+    "karma-junit-reporter": "^2.0.1",
     "karma-mocha": "^1.3.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.3",

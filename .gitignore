@@ -6,3 +6,4 @@ node_modules
 *.scssc
 *.TMP
 dist
+results

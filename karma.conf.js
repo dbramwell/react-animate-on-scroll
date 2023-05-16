@@ -2,7 +2,7 @@ var webpack = require('webpack');
 
 module.exports = function (config) {
   var configuration = {
-    browsers: ['ChromeNoSandboxHeadless', 'IE'],
+    browsers: ['ChromeNoSandboxHeadless'],
 
     customLaunchers: {
       ChromeNoSandboxHeadless: {
@@ -26,7 +26,12 @@ module.exports = function (config) {
     preprocessors: {
       'tests.webpack.js': [ 'webpack', 'sourcemap' ] //preprocess with webpack and our sourcemap loader
     },
-    reporters: [ 'dots' ], //report results in this format
+    reporters: ['progress', 'junit'],
+
+    // the default configuration
+    junitReporter: {
+      outputDir: 'results'
+    },
     webpack: { //kind of a copy of your webpack config
       devtool: 'inline-source-map', //just do inline source maps instead of the default
       module: {
@@ -47,8 +52,5 @@ module.exports = function (config) {
     }
   };
 
-  if(process.env.TRAVIS){
-    configuration.browsers = ['ChromeNoSandboxHeadless'];
-  }
   config.set(configuration);
 };

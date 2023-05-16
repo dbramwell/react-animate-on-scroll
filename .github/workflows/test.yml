@@ -1,0 +1,35 @@
+name: test
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Create Test Output directory
+      run: |
+        mkdir ${{ github.workspace }}/results
+        chmod a+w ${{ github.workspace }}/results
+
+    - name: Unit Tests
+      run: |
+        docker compose run --volume=${{ github.workspace }}/results:/app/results --rm build npm test
+
+    - name: Upload Unit Test Results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: unit-test-results-${{ github.sha }}
+        path: ${{ github.workspace }}/results/*.xml
+        if-no-files-found: error
+
+    - name: Publish Unit Test Results
+      if: always()
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      with:
+        files: ${{ github.workspace }}/results/*.xml
