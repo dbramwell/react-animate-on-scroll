@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout
+      uses: actions/checkout@v3
 
     - name: Create Test Output directory
       run: |
@@ -22,7 +22,7 @@ jobs:
 
     - name: Upload Unit Test Results
       if: always()
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v2
       with:
         name: unit-test-results-${{ github.sha }}
         path: ${{ github.workspace }}/results/*.xml
