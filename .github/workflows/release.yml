@@ -1,0 +1,23 @@
+name: Publish to NPM
+on:
+  release:
+    types: [created]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build and Publish
+        run: |
+          docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build && npm publish
+
+      - name: Build demo
+        run: |
+          docker compose run --rm demo npm run build
+
+      - name: Deploy demo
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: demo/build # The folder the action should deploy.
