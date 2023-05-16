@@ -12,9 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Build and Publish
+      - name: Build library
+        run: |
+          docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build
+
+      # - name: Publish library
       #   run: |
-      #     docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build && npm publish
+      #     docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm publish --access public
 
       - name: Build demo
         run: |
