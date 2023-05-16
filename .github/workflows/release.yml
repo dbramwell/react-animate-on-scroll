@@ -11,7 +11,7 @@ jobs:
 
       - name: Build library
         run: |
-          docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build
+          docker compose run --rm build npm run build
 
       - name: Publish library
         run: |
