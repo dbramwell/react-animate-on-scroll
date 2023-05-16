@@ -1,5 +1,8 @@
 name: Publish to NPM
 on:
+  push:
+    branches:
+      - master
   release:
     types: [created]
 jobs:
@@ -9,9 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Build and Publish
-        run: |
-          docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build && npm publish
+      # - name: Build and Publish
+      #   run: |
+      #     docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build && npm publish
 
       - name: Build demo
         run: |
