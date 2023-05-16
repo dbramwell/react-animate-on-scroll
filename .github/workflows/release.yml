@@ -1,8 +1,5 @@
 name: Publish to NPM
 on:
-  push:
-    branches:
-      - master
   release:
     types: [created]
 jobs:
@@ -16,9 +13,9 @@ jobs:
         run: |
           docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm run build
 
-      # - name: Publish library
-      #   run: |
-      #     docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm publish --access public
+      - name: Publish library
+        run: |
+          docker compose run --rm -e NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} build npm publish --access public
 
       - name: Build demo
         run: |
@@ -27,4 +24,4 @@ jobs:
       - name: Deploy demo
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: demo/build # The folder the action should deploy.
+          folder: demo/build
