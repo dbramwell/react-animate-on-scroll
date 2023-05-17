@@ -10058,6 +10058,7 @@
 	    value: function componentWillUnmount() {
 	      clearTimeout(this.delayedAnimationTimeout);
 	      clearTimeout(this.callbackTimeout);
+	      this.listener.cancel();
 	      if (window && window.removeEventListener) {
 	        window.removeEventListener("scroll", this.listener);
 	      }
@@ -71544,4 +71545,4 @@
 
 /***/ }
 /******/ ])));
-//# sourceMappingURL=main.2fd248cc.js.map
+//# sourceMappingURL=main.e530eee4.js.map
